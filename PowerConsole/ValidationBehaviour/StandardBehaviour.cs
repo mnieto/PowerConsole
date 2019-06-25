@@ -17,7 +17,8 @@ namespace PowerConsole.ValidationBehaviour {
         /// <param name="message">Message to be shown, logged,...</param>
         /// <returns><c>false</c>: The console doesn't needs to reposition the cursor after the message management</returns>
         public override bool ShowMessage(string message) {
-            SysConsole.WriteLine(message);
+            if (!string.IsNullOrWhiteSpace(message))
+                SysConsole.WriteLine(message);
             return NeedReposition;
         }
     }
