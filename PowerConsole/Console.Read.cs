@@ -1,11 +1,18 @@
 using System;
-using SysConsole = System.Console;
 using System.ComponentModel.DataAnnotations;
+using SysConsole = System.Console;
+using PowerConsole.ValidationBehaviour;
 
 namespace PowerConsole
 {
     public partial class Console
     {
+
+        public static void Configure(Action<ConsoleOptions> configurationExpression = null) {
+            var configOptions = new ConsoleOptions();
+            configurationExpression?.Invoke(configOptions);
+            Options = configOptions;
+        }
         public static ConsoleOptions Options { get; set; } = new ConsoleOptions();
         public static DefaultColors Colors { get; set; } = new DefaultColors();
 
@@ -59,6 +66,7 @@ namespace PowerConsole
                     if (validations != null) {
                         foreach (var validation in validations) {
                             if (!validation.IsValid(result)) {
+                                //TODO: Use AggregateException to run all the validations?
                                 throw new ValidationException(validation.ErrorMessage, validation, result);
                             }
                         }
@@ -67,16 +75,10 @@ namespace PowerConsole
                 } catch (Exception ex) {
                     if (Options.ThrowErrorOnInvalidInput)
                         throw;
-                    if (Options.BeepOnError)
-                        SysConsole.Beep();
-                    bool reposition = true;
-                    if (Options.ShowErrorMessages) {
-                        ShowErrorMessage(ex.Message);
-                    } else if (Options.StandardErrorMessages) {
-                        SysConsole.Error.WriteLine(ex.Message);
-                        reposition = false;
+                    var reposition = false;
+                    foreach(IValidationBehavior behavior in Options.ValidationBehaviours) {
+                        reposition |= behavior.ShowMessage(ex.Message);         //if any of the behaviors need to reposition the cursor
                     }
-
                     if (reposition) {
                         SysConsole.SetCursorPosition(x, y);
                         SysConsole.Write(new string(' ', (message?.Length ?? 0) + value.Length));
@@ -95,35 +97,5 @@ namespace PowerConsole
             }
         }
 
-        protected static void ShowErrorMessage(string message) {
-            message = message.Substring(0, Math.Min(message.Length, SysConsole.LargestWindowWidth));
-
-            //Save values phase
-            int x = SysConsole.CursorLeft;
-            int y = SysConsole.CursorTop;
-            ConsoleColor foreColor = SysConsole.ForegroundColor;
-            ConsoleColor backColor = SysConsole.BackgroundColor;
-
-            //Write phase
-            //This may overwrite legitime text. It's possible to read previously existing text from console to save it and restore after showing the message
-            //https://stackoverflow.com/questions/12355378/read-from-location-on-console-c-sharp
-            //https://docs.microsoft.com/en-us/windows/console/reading-and-writing-blocks-of-characters-and-attributes
-            SysConsole.SetCursorPosition(0, SysConsole.WindowTop + SysConsole.WindowHeight - 1);
-            SysConsole.ForegroundColor = Colors.ErrorColor;
-            SysConsole.Write(message);
-
-            //Wait and restore phase
-            SysConsole.ForegroundColor = foreColor;
-            SysConsole.BackgroundColor = backColor;
-            if (Options.StatusMessagesDuration == 0) {
-                SysConsole.ReadKey();
-            } else {
-                //It would be nice if we could wait in separate thread. In that case, be awere that the cursos position could be different from the stored in the save phase
-                //https://stackoverflow.com/questions/46862475/changing-thread-context-in-c-sharp-console-application
-                System.Threading.Thread.Sleep(Options.StatusMessagesDuration);
-            }
-            SysConsole.Write("\r" + new string(' ', message.Length));
-            SysConsole.SetCursorPosition(x, y);
-        }
     }
 }
