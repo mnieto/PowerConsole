@@ -2,6 +2,10 @@
 using SysConsole = System.Console;
 
 namespace PowerConsole.ValidationBehaviour {
+
+    /// <summary>
+    /// Shows the messages in the status bar (bottom right line of the console)
+    /// </summary>
     public class StatusBarBehaviour : BaseValidationBehavior, IValidationBehavior {
         /// <summary>
         /// Duration (in ms) the messages are shown in the bottom left corner of the console
@@ -43,7 +47,7 @@ namespace PowerConsole.ValidationBehaviour {
             ConsoleColor backColor = SysConsole.BackgroundColor;
 
             //Write phase
-            //This may overwrite legitime text. It's possible to read previously existing text from console to save it and restore after showing the message
+            //This may overwrite existing text. It's possible to read previously existing text from console to save it and restore after showing the message
             //https://stackoverflow.com/questions/12355378/read-from-location-on-console-c-sharp
             //https://docs.microsoft.com/en-us/windows/console/reading-and-writing-blocks-of-characters-and-attributes
             SysConsole.SetCursorPosition(0, SysConsole.WindowTop + SysConsole.WindowHeight - 1);

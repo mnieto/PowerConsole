@@ -6,17 +6,40 @@ using System.Text;
 
 namespace PowerConsole
 {
+    /// <summary>
+    /// Console main class
+    /// </summary>
     public partial class Console
     {
 
+        /// <summary>
+        /// Allows to configure the behavior of <see cref="PowerConsole"/>
+        /// </summary>
+        /// <param name="configurationExpression"><see cref="Action{ConsoleOptions}"/></param>
         public static void Configure(Action<ConsoleOptions> configurationExpression = null) {
             var configOptions = new ConsoleOptions();
             configurationExpression?.Invoke(configOptions);
             Options = configOptions;
         }
+
+        /// <summary>
+        /// Other way to access the <see cref="PowerConsole"/> options
+        /// </summary>
         public static ConsoleOptions Options { get; set; } = new ConsoleOptions();
+
+        /// <summary>
+        /// Default color set
+        /// </summary>
         public static DefaultColors Colors { get; set; } = new DefaultColors();
 
+        /// <summary>
+        /// Position the cursor in a coordinate and reads a value of type T from console. Repeat the input until the typed value is valid.
+        /// </summary>
+        /// <param name="message">Optional prompt message</param>
+        /// <param name="x">horizontal position. If <paramref name="message" /> is specified, the x position is the starting coordinate of the message. Position is zero based</param>
+        /// <param name="y">vertical position. If <paramref name="message"/> is specified, the x position is the starting coordinate of the message. Position is zero based</param>
+        /// <typeparam name="T">Type of the returned value</typeparam>
+        /// <exception cref="InvalidOperationException"> if the input or output streams are redirected</exception>
         public static T ReadLineAt<T>(string message, int x, int y) {
             return ReadLineAt<T>(message, x, y, v => null);
         }
@@ -26,10 +49,10 @@ namespace PowerConsole
         /// </summary>
         /// <param name="message">Optional prompt message</param>
         /// <param name="x">horizontal position. If <paramref name="message" /> is specified, the x position is the starting coordinate of the message. Position is zero based</param>
-        /// <param name="x">vertical position. If <paramref name="message"/> is specified, the x position is the starting coordinate of the message. Position is zero based</param>
-        /// <param name="validation">a validation object</param>
+        /// <param name="y">vertical position. If <paramref name="message"/> is specified, the x position is the starting coordinate of the message. Position is zero based</param>
+        /// <param name="validations">a validation object</param>
         /// <typeparam name="T">Type of the returned value</typeparam>
-        /// <exception cref="InvalidOperationException"> if the input or output streams are redirected<</exception>
+        /// <exception cref="InvalidOperationException"> if the input or output streams are redirected</exception>
         public static T ReadLineAt<T>(string message, int x, int y, params ValidationAttribute[] validations) {
             CheckRedirected();
             SysConsole.SetCursorPosition(x, y);
@@ -42,9 +65,10 @@ namespace PowerConsole
         /// <typeparam name="T">Type of the returned value</typeparam>
         /// <param name="message">Optional prompt message</param>
         /// <param name="x">horizontal position. If <paramref name="message" /> is specified, the x position is the starting coordinate of the message. Position is zero based</param>
-        /// <param name="x">vertical position. If <paramref name="message"/> is specified, the x position is the starting coordinate of the message. Position is zero based</param>
+        /// <param name="y">vertical position. If <paramref name="message"/> is specified, the x position is the starting coordinate of the message. Position is zero based</param>
         /// <param name="validationExpression">Function that receives the input value and returns a <see cref="ValidationResult"/> object</param>
         /// <returns>A validated value</returns>
+        /// <exception cref="InvalidOperationException"> if the input or output streams are redirected</exception>
         public static T ReadLineAt<T>(string message, int x, int y, Func<T, ValidationResult> validationExpression) {
             CheckRedirected();
             SysConsole.SetCursorPosition(x, y);
@@ -57,10 +81,11 @@ namespace PowerConsole
         /// <typeparam name="T">Type of the returned value</typeparam>
         /// <param name="message">Optional prompt message</param>
         /// <param name="x">horizontal position. If <paramref name="message" /> is specified, the x position is the starting coordinate of the message. Position is zero based</param>
-        /// <param name="x">vertical position. If <paramref name="message"/> is specified, the x position is the starting coordinate of the message. Position is zero based</param>
+        /// <param name="y">vertical position. If <paramref name="message"/> is specified, the x position is the starting coordinate of the message. Position is zero based</param>
         /// <param name="errorMessage">Error message to be shown in case of the input value is not valid</param>
         /// <param name="validationExpression">Function that receives the input value and returns <c>true</c> if it is valid or <c>false</c> if the input value is not valid</param>
         /// <returns>A validated value</returns>
+        /// <exception cref="InvalidOperationException"> if the input or output streams are redirected</exception>
         public static T ReadLineAt<T>(string message, int x, int y, string errorMessage, Func<T, bool> validationExpression) {
             CheckRedirected();
             SysConsole.SetCursorPosition(x, y);
@@ -73,9 +98,10 @@ namespace PowerConsole
         /// <typeparam name="T">Type of the returned value</typeparam>
         /// <param name="message">Optional prompt message</param>
         /// <param name="x">horizontal position. If <paramref name="message" /> is specified, the x position is the starting coordinate of the message. Position is zero based</param>
-        /// <param name="x">vertical position. If <paramref name="message"/> is specified, the x position is the starting coordinate of the message. Position is zero based</param>
+        /// <param name="y">vertical position. If <paramref name="message"/> is specified, the x position is the starting coordinate of the message. Position is zero based</param>
         /// <param name="validationExpression">Function that receives the input value and returns <c>true</c> if it is valid or <c>false</c> if the input value is not valid</param>
         /// <returns>A validated value</returns>
+        /// <exception cref="InvalidOperationException"> if the input or output streams are redirected</exception>
         public static T ReadLineAt<T>(string message, int x, int y, Func<T, bool> validationExpression) {
             CheckRedirected();
             SysConsole.SetCursorPosition(x, y);
@@ -83,11 +109,10 @@ namespace PowerConsole
         }
         
         /// <summary>
-                 /// Position the cursor in a coordinate and reads a value of type T from console. Repeat the input until the typed value is valid.
-                 /// </summary>
-                 /// <param name="message">Optional prompt message</param>
-                 /// <typeparam name="T">Type of the returned value</typeparam>
-                 /// <exception cref="InvalidOperationException"> if the input or output streams are redirected<</exception>
+        /// Position the cursor in a coordinate and reads a value of type T from console. Repeat the input until the typed value is valid.
+        /// </summary>
+        /// <param name="message">Optional prompt message</param>
+        /// <typeparam name="T">Type of the returned value</typeparam>
         public static T ReadLine<T>(string message) {
             return ReadLine<T>(message, x => null);
         }
@@ -96,9 +121,8 @@ namespace PowerConsole
         /// Position the cursor in a coordinate and reads a value of type T from console. Repeat the input until the typed value is valid.
         /// </summary>
         /// <param name="message">Optional prompt message</param>
-        /// <param name="validation">a validation object</param>
+        /// <param name="validations">a validation object</param>
         /// <typeparam name="T">Type of the returned value</typeparam>
-        /// <exception cref="InvalidOperationException"> if the input or output streams are redirected<</exception
         public static T ReadLine<T>(string message, params ValidationAttribute[] validations) {
             return ReadLine<T>(message, ConvertValidations<T>(validations));
         }
@@ -120,7 +144,6 @@ namespace PowerConsole
         /// </summary>
         /// <typeparam name="T">Type of the returned value</typeparam>
         /// <param name="message">Optional prompt message</param>
-        /// <param name="errorMessage">Error message to be shown in case of the input value is not valid</param>
         /// <param name="validationExpression">Function that receives the input value and returns <c>true</c> if it is valid or <c>false</c> if the input value is not valid</param>
         /// <returns>A validated value</returns>
         public static T ReadLine<T>(string message, Func<T, bool> validationExpression) {
