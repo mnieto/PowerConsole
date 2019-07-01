@@ -12,7 +12,6 @@ namespace PowerConsole
                 cfg.AddValidationBehavior(new CustomBehaviour(() => System.Console.Beep(), false));
             });
 
-
             //Simple read without validation
             string name = Console.ReadLine<string>("What's your name? ");
 
@@ -27,6 +26,10 @@ namespace PowerConsole
 
             //Using custom validation without message
             bool guessValidResponse = Console.ReadLine<bool>("Are you happy? ", x => x == true);
+
+            //Parse string
+            var parser = new AcceleratorCharString(new Color(System.ConsoleColor.Blue));
+            Console.WriteLine("Hello &world", parser);
 
 
             System.Console.Write("Press any key to continue");
