@@ -29,7 +29,11 @@ namespace PowerConsole
             set => _background = value;
         }
 
-
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="foreground">Foreground color. If not specified, default foreColor is used</param>
+        /// <param name="background">Background color. If not specified, default backColor is used</param>
         public Color(ConsoleColor? foreground = null, ConsoleColor? background = null) {
             _foreground = foreground;
             _background = background;

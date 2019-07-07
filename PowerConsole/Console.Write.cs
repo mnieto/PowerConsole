@@ -25,7 +25,7 @@ namespace PowerConsole
 
 
         /// <summary>
-        /// Writes the specified value with the specifed color
+        /// Writes the specified value with the specified color
         /// </summary>
         /// <param name="value">The value to write</param>
         /// <param name="color">The color to use</param>
@@ -37,7 +37,7 @@ namespace PowerConsole
         }
 
         /// <summary>
-        /// Writes the specified value with the specifed color
+        /// Writes the specified value with the specified color
         /// </summary>
         /// <param name="value">The value to write</param>
         /// <param name="color">The color to use</param>
@@ -55,6 +55,14 @@ namespace PowerConsole
         /// <param name="parser">A parser that implements <see cref="ITokenizeString"/></param>
         public static void Write(string value, ITokenizeString parser) {
             Write(parser.Parse(value));
+        }
+
+        /// <summary>
+        /// Writes a tokenized string
+        /// </summary>
+        /// <param name="token">chunks of the string</param>
+        public static void Write(ColorToken token) {
+            Write(token.Text, token.Color.Foreground);
         }
 
         /// <summary>

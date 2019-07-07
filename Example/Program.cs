@@ -13,9 +13,9 @@ namespace PowerConsole
             });
 
             //Simple read without validation
-            string name = Console.ReadLine<string>("What's your name? ");
+            string name = Console.ReadLine<string>("What's your name? ".Blue(), new Color(System.ConsoleColor.Yellow));
 
-            //Using ValidationAttributre
+            //Using ValidationAttribute
             var ageValidator = new RangeAttribute(18, int.MaxValue) {
                 ErrorMessage = "You must be an adult"
             };
@@ -25,7 +25,7 @@ namespace PowerConsole
             string phone = Console.ReadLine<string>("And your phone? ", "It's not a valid phone number", x => System.Text.RegularExpressions.Regex.IsMatch(x, @"\d{9}"));
 
             //Using custom validation without message
-            bool guessValidResponse = Console.ReadLine<bool>("Are you happy? ", x => x == true);
+            bool guessValidResponse = Console.ReadLine<bool>("Are you happy? ", x => x == true, new Color(System.ConsoleColor.Yellow));
 
             //Parse string
             var parser = new AcceleratorCharString(new Color(System.ConsoleColor.Blue));
