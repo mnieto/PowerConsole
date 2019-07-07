@@ -6,11 +6,13 @@ namespace PowerConsole
     class Program
     {
         static void Main(string[] args) {
-            System.Console.WriteLine("Hello World!");
+            
 
             Console.Configure(cfg => {
                 cfg.AddValidationBehavior(new CustomBehaviour(() => System.Console.Beep(), false));
             });
+
+            Console.WriteLine("Hello World!".White().OnRed());
 
             //Simple read without validation
             string name = Console.ReadLine<string>("What's your name? ".Blue(), new Color(System.ConsoleColor.Yellow));
@@ -22,7 +24,9 @@ namespace PowerConsole
             int age = Console.ReadLine<int>($"What's your age, {name}? ", ageValidator);
 
             //Using custom validation
-            string phone = Console.ReadLine<string>("And your phone? ", "It's not a valid phone number", x => System.Text.RegularExpressions.Regex.IsMatch(x, @"\d{9}"));
+            string phone = Console.ReadLine<string>("And your phone? ", "It's not a valid phone number",
+                x => System.Text.RegularExpressions.Regex.IsMatch(x, @"\d{9}"),
+                new Color(null, System.ConsoleColor.DarkBlue));
 
             //Using custom validation without message
             bool guessValidResponse = Console.ReadLine<bool>("Are you happy? ", x => x == true, new Color(System.ConsoleColor.Yellow));

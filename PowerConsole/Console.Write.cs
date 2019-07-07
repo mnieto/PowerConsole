@@ -20,7 +20,7 @@ namespace PowerConsole
         /// </summary>
         /// <param name="value">The value to write</param>
         public static void Write(object value) {
-        SysConsole.Write(value);
+            SysConsole.Write(value);
         }
 
 
@@ -29,11 +29,13 @@ namespace PowerConsole
         /// </summary>
         /// <param name="value">The value to write</param>
         /// <param name="color">The color to use</param>
-        public static void Write(string value, ConsoleColor color) {
-        ConsoleColor prevColor = SysConsole.ForegroundColor;
-            SysConsole.ForegroundColor = color;
+        public static void Write(string value, Color color) {
+            Color prevColor = new Color(SysConsole.ForegroundColor, SysConsole.BackgroundColor);
+            SysConsole.ForegroundColor = color.Foreground;
+            SysConsole.BackgroundColor = color.Background;
             SysConsole.Write(value);
-            SysConsole.ForegroundColor = prevColor;
+            SysConsole.ForegroundColor = prevColor.Foreground;
+            SysConsole.BackgroundColor = prevColor.Background;
         }
 
         /// <summary>
@@ -41,11 +43,8 @@ namespace PowerConsole
         /// </summary>
         /// <param name="value">The value to write</param>
         /// <param name="color">The color to use</param>
-        public static void Write(object value, ConsoleColor color) {
-            ConsoleColor prevColor = SysConsole.ForegroundColor;
-            SysConsole.ForegroundColor = color;
-            SysConsole.Write(value);
-            SysConsole.ForegroundColor = prevColor;
+        public static void Write(object value, Color color) {
+            Write(value.ToString(), color);
         }
 
         /// <summary>
@@ -62,7 +61,7 @@ namespace PowerConsole
         /// </summary>
         /// <param name="token">chunks of the string</param>
         public static void Write(ColorToken token) {
-            Write(token.Text, token.Color.Foreground);
+            Write(token.Text, token.Color);
         }
 
         /// <summary>
@@ -71,7 +70,7 @@ namespace PowerConsole
         /// <param name="tokens">chunks of the string</param>
         public static void Write(IEnumerable<ColorToken> tokens) {
             foreach (var token in tokens) {
-                Write(token.Text, token.Color.Foreground);
+                Write(token.Text, token.Color);
             }
         }
 
@@ -104,7 +103,7 @@ namespace PowerConsole
         /// <param name="x">The horizontal position</param>
         /// <param name="y">The vertical position</param>
         /// <param name="color">The color to use</param>
-        public static void WriteAt(string value, int x, int y, ConsoleColor color) {
+        public static void WriteAt(string value, int x, int y, Color color) {
             SysConsole.SetCursorPosition(x, y);
             Write(value, color);
         }
@@ -116,7 +115,7 @@ namespace PowerConsole
         /// <param name="x">The horizontal position</param>
         /// <param name="y">The vertical position</param>
         /// <param name="color">The color to use</param>
-        public static void WriteAt(object value, int x, int y, ConsoleColor color) {
+        public static void WriteAt(object value, int x, int y, Color color) {
             SysConsole.SetCursorPosition(x, y);
             Write(value, color);
         }
@@ -143,7 +142,7 @@ namespace PowerConsole
         public static void WriteAt(int x, int y, IEnumerable<ColorToken> tokens) {
             SysConsole.SetCursorPosition(x, y);
             foreach (var token in tokens) {
-                Write(token.Text, token.Color.Foreground);
+                Write(token.Text, token.Color);
             }
         }
 
@@ -175,11 +174,8 @@ namespace PowerConsole
         /// </summary>
         /// <param name="value">The value to write</param>
         /// <param name="color">The color to use</param>
-        public static void WriteLine(string value, ConsoleColor color) {
-            ConsoleColor prevColor = SysConsole.ForegroundColor;
-            SysConsole.ForegroundColor = color;
-            SysConsole.WriteLine(value);
-            SysConsole.ForegroundColor = prevColor;
+        public static void WriteLine(string value, Color color) {
+            WriteLine(new ColorToken(value, color));
         }
 
         /// <summary>
@@ -189,6 +185,19 @@ namespace PowerConsole
         /// <param name="parser">A parser that implements <see cref="ITokenizeString"/></param>
         public static void WriteLine(string value, ITokenizeString parser) {
             WriteLine(parser.Parse(value));
+        }
+
+        /// <summary>
+        /// Writes a tokenized string, each chunk with its color specification
+        /// </summary>
+        /// <param name="token">chunks of the string</param>
+        public static void WriteLine(ColorToken token) {
+            Color prevColor = new Color(SysConsole.ForegroundColor, SysConsole.BackgroundColor);
+            SysConsole.ForegroundColor = token.Color.Foreground;
+            SysConsole.BackgroundColor = token.Color.Background;
+            SysConsole.WriteLine(token.Text);
+            SysConsole.ForegroundColor = prevColor.Foreground;
+            SysConsole.BackgroundColor = prevColor.Background;
         }
 
         /// <summary>
