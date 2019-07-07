@@ -5,12 +5,12 @@ using System.Linq;
 
 namespace PowerConsole.Test
 {
-    public class AcceleratorCharStringTest
+    public class AcceleratorCharTokenizerTest
     {
         [Fact]
         public void ParseWithNoAcceleratorChar() {
             string text = "Hello world!";
-            var parser = new AcceleratorCharString();
+            var parser = new AcceleratorCharTokenizer();
             var tokens = parser.Parse(text);
 
             Assert.Single(tokens);
@@ -20,7 +20,7 @@ namespace PowerConsole.Test
         [Fact]
         public void ParseWithAcceleratorCharInMiddle() {
             string text = "Hello &world!";
-            var parser = new AcceleratorCharString();
+            var parser = new AcceleratorCharTokenizer();
             var tokens = parser.Parse(text);
 
             Assert.Collection(tokens,
@@ -33,7 +33,7 @@ namespace PowerConsole.Test
         [Fact]
         public void ParseWithEscapedAcceleratorChar() {
             string text = "Hello world && moon";
-            var parser = new AcceleratorCharString();
+            var parser = new AcceleratorCharTokenizer();
             var tokens = parser.Parse(text);
 
             Assert.Single(tokens);
@@ -43,7 +43,7 @@ namespace PowerConsole.Test
         [Fact]
         public void ParseAtFirstChar() {
             string text = "&Hello world!";
-            var parser = new AcceleratorCharString();
+            var parser = new AcceleratorCharTokenizer();
             var tokens = parser.Parse(text);
 
             Assert.Collection(tokens,
@@ -55,7 +55,7 @@ namespace PowerConsole.Test
         [Fact]
         public void ParseAtEnd() {
             string text = "Hello &world&";
-            var parser = new AcceleratorCharString();
+            var parser = new AcceleratorCharTokenizer();
             var tokens = parser.Parse(text);
 
             Assert.Collection(tokens,
@@ -69,7 +69,7 @@ namespace PowerConsole.Test
         [Fact]
         public void AcceleratorCharHasHighlightColor() {
             string text = "Hello &world&";
-            var parser = new AcceleratorCharString();
+            var parser = new AcceleratorCharTokenizer();
             var tokens = parser.Parse(text);
 
             Assert.Equal(3, tokens.Count());

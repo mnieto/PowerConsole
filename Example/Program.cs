@@ -24,15 +24,20 @@ namespace PowerConsole
             int age = Console.ReadLine<int>($"What's your age, {name}? ", ageValidator);
 
             //Using custom validation
+            const string pattern = @"\d{9}";
             string phone = Console.ReadLine<string>("And your phone? ", "It's not a valid phone number",
-                x => System.Text.RegularExpressions.Regex.IsMatch(x, @"\d{9}"),
+                x => System.Text.RegularExpressions.Regex.IsMatch(x, pattern),
                 new Color(null, System.ConsoleColor.DarkBlue));
+
+            //Using regex to highlight matching text
+            var tokenizer = new RegexTokenizer(pattern, new Color(System.ConsoleColor.White));
+            Console.WriteLine(tokenizer.Parse($"We have updated your {phone} number"));
 
             //Using custom validation without message
             bool guessValidResponse = Console.ReadLine<bool>("Are you happy? ", x => x == true, new Color(System.ConsoleColor.Yellow));
 
             //Parse string
-            var parser = new AcceleratorCharString(new Color(System.ConsoleColor.Blue));
+            var parser = new AcceleratorCharTokenizer(new Color(System.ConsoleColor.Blue));
             Console.WriteLine("Hello &world", parser);
 
 

@@ -7,7 +7,7 @@ namespace PowerConsole
     /// <summary>
     /// Split the string searching the <see cref="AcceleratorChar"/> as separator char
     /// </summary>
-    public class AcceleratorCharString : ITokenizeString
+    public class AcceleratorCharTokenizer : ITokenizeString
     {
         /// <summary>
         /// Separator char. The next character to this is highlighted. If you need to write the accelerator char it self, repeat it twice
@@ -31,7 +31,7 @@ namespace PowerConsole
         /// </summary>
         /// <param name="highlightColor">Highlighted color for the next char to <see cref="AcceleratorChar"/>.</param>
         /// <param name="defaultColor">Default color of the string. If <c>null</c> the current <see cref="DefaultColors.ForeColor"/> of <see cref="Console.Colors"/> is used</param>
-        public AcceleratorCharString(Color? highlightColor, Color? defaultColor = null) : this ('&', highlightColor, defaultColor) { }
+        public AcceleratorCharTokenizer(Color? highlightColor, Color? defaultColor = null) : this ('&', highlightColor, defaultColor) { }
 
 
         /// <summary>
@@ -43,7 +43,7 @@ namespace PowerConsole
         /// If <c>null</c> the current <see cref="DefaultColors.HightLightColor"/> of <see cref="Console.Colors"/> is used
         /// </param>
         /// <param name="defaultColor">Default color of the string. If <c>null</c> the current <see cref="DefaultColors.ForeColor"/> of <see cref="Console.Colors"/> is used</param>
-        public AcceleratorCharString(char acceleratorChar = '&', Color? highlightColor = null, Color? defaultColor = null) {
+        public AcceleratorCharTokenizer(char acceleratorChar = '&', Color? highlightColor = null, Color? defaultColor = null) {
             AcceleratorChar = acceleratorChar;
             HighlightColor = highlightColor ?? new Color(Console.Colors.HightLightColor, Console.Colors.BackColor);
             DefaultColor = defaultColor ?? new Color(Console.Colors.ForeColor, Console.Colors.BackColor);

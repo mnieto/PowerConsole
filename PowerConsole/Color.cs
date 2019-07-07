@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Text;
 
 namespace PowerConsole
@@ -7,6 +8,7 @@ namespace PowerConsole
     /// <summary>
     /// Maintains the fore and back colors pair
     /// </summary>
+    [DebuggerDisplay("({Foreground},{Background})")]
     public struct Color
     {
 
@@ -37,6 +39,10 @@ namespace PowerConsole
         public Color(ConsoleColor? foreground = null, ConsoleColor? background = null) {
             _foreground = foreground;
             _background = background;
+        }
+
+        public override string ToString() {
+            return $"({Foreground}, {Background})";
         }
     }
 }
