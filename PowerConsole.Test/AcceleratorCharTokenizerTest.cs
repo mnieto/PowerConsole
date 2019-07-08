@@ -78,7 +78,7 @@ namespace PowerConsole.Test
             Assert.Equal(Console.Colors.BackColor, token.Color.Background);
 
             token = tokens.Skip(1).First();
-            Assert.Equal(Console.Colors.HightLightColor, token.Color.Foreground);
+            Assert.Equal(Console.Colors.HighlightColor, token.Color.Foreground);
             Assert.Equal(Console.Colors.BackColor, token.Color.Background);
 
         }

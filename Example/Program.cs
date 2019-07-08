@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using PowerConsole.Components;
 using PowerConsole.ValidationBehaviour;
 
 namespace PowerConsole
@@ -6,7 +7,7 @@ namespace PowerConsole
     class Program
     {
         static void Main(string[] args) {
-            
+
 
             Console.Configure(cfg => {
                 cfg.AddValidationBehavior(new CustomBehaviour(() => System.Console.Beep(), false));
@@ -38,8 +39,16 @@ namespace PowerConsole
 
             //Parse string
             var parser = new AcceleratorCharTokenizer(Color.Blue);
-            Console.WriteLine("Hello &world", parser);
+            Console.WriteLine("This is &your menu:", parser);
 
+            var menu = new Menu(new string[] {
+                "Salad",
+                "Vegetables",
+                "Beans",
+                "Omelette"
+            });
+            string choice = menu.Show();
+            Console.WriteLine("Thanks for your choice");
 
             System.Console.Write("Press any key to continue");
             System.Console.ReadKey();

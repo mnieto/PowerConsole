@@ -21,7 +21,7 @@ namespace PowerConsole
 
         /// <summary>
         /// Highlighted color for the next char to <see cref="AcceleratorChar"/>. 
-        /// If <c>null</c> the current <see cref="DefaultColors.HightLightColor"/> of <see cref="Console.Colors"/> is used
+        /// If <c>null</c> the current <see cref="DefaultColors.HighlightColor"/> of <see cref="Console.Colors"/> is used
         /// </summary>
         public Color HighlightColor { get; set; }
 
@@ -40,12 +40,12 @@ namespace PowerConsole
         /// <param name="acceleratorChar">the accelerator char marker</param>
         /// <param name="highlightColor">
         /// Highlighted color for the next char to <see cref="AcceleratorChar"/>. 
-        /// If <c>null</c> the current <see cref="DefaultColors.HightLightColor"/> of <see cref="Console.Colors"/> is used
+        /// If <c>null</c> the current <see cref="DefaultColors.HighlightColor"/> of <see cref="Console.Colors"/> is used
         /// </param>
         /// <param name="defaultColor">Default color of the string. If <c>null</c> the current <see cref="DefaultColors.ForeColor"/> of <see cref="Console.Colors"/> is used</param>
         public AcceleratorCharTokenizer(char acceleratorChar = '&', Color? highlightColor = null, Color? defaultColor = null) {
             AcceleratorChar = acceleratorChar;
-            HighlightColor = highlightColor ?? new Color(Console.Colors.HightLightColor, Console.Colors.BackColor);
+            HighlightColor = highlightColor ?? new Color(Console.Colors.HighlightColor, Console.Colors.BackColor);
             DefaultColor = defaultColor ?? new Color(Console.Colors.ForeColor, Console.Colors.BackColor);
         }
 

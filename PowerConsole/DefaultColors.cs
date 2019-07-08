@@ -33,8 +33,8 @@ namespace PowerConsole
         public ConsoleColor ForeColor {get; set; } = System.Console.ForegroundColor;
 
         /// <summary>
-        /// HightLight titles, accelerator keys,...  
+        /// Highlight titles, accelerator keys,...  
         /// </summary>
-        public ConsoleColor HightLightColor {get; set; } = ConsoleColor.White;
+        public ConsoleColor HighlightColor {get; set; } = ConsoleColor.White;
     }
 }
