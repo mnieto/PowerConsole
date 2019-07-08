@@ -15,7 +15,7 @@ namespace PowerConsole
             Console.WriteLine("Hello World!".White().OnRed());
 
             //Simple read without validation
-            string name = Console.ReadLine<string>("What's your name? ".Blue(), new Color(System.ConsoleColor.Yellow));
+            string name = Console.ReadLine<string>("What's your name? ".Blue(), Color.Yellow);
 
             //Using ValidationAttribute
             var ageValidator = new RangeAttribute(18, int.MaxValue) {
@@ -34,10 +34,10 @@ namespace PowerConsole
             Console.WriteLine(tokenizer.Parse($"We have updated your {phone} number"));
 
             //Using custom validation without message
-            bool guessValidResponse = Console.ReadLine<bool>("Are you happy? ", x => x == true, new Color(System.ConsoleColor.Yellow));
+            bool guessValidResponse = Console.ReadLine<bool>("Are you happy? ", x => x == true, Color.Yellow);
 
             //Parse string
-            var parser = new AcceleratorCharTokenizer(new Color(System.ConsoleColor.Blue));
+            var parser = new AcceleratorCharTokenizer(Color.Blue);
             Console.WriteLine("Hello &world", parser);
 
 
