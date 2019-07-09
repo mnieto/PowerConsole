@@ -14,26 +14,6 @@ namespace PowerConsole
     {
 
         /// <summary>
-        /// Allows to configure the behavior of <see cref="PowerConsole"/>
-        /// </summary>
-        /// <param name="configurationExpression"><see cref="Action{ConsoleOptions}"/></param>
-        public static void Configure(Action<ConsoleOptions> configurationExpression = null) {
-            var configOptions = new ConsoleOptions();
-            configurationExpression?.Invoke(configOptions);
-            Options = configOptions;
-        }
-
-        /// <summary>
-        /// Other way to access the <see cref="PowerConsole"/> options
-        /// </summary>
-        public static ConsoleOptions Options { get; set; } = new ConsoleOptions();
-
-        /// <summary>
-        /// Default color set
-        /// </summary>
-        public static DefaultColors Colors { get; set; } = new DefaultColors();
-
-        /// <summary>
         /// Position the cursor in a coordinate and reads a value of type T from console. Repeat the input until the typed value is valid.
         /// </summary>
         /// <param name="message">Optional prompt message</param>
@@ -70,9 +50,11 @@ namespace PowerConsole
         /// <typeparam name="T">Type of the returned value</typeparam>
         /// <exception cref="InvalidOperationException"> if the input or output streams are redirected</exception>
         public static T ReadLineAt<T>(string message, int x, int y, params ValidationAttribute[] validations) {
-            CheckRedirected();
-            SysConsole.SetCursorPosition(x, y);
-            return ReadLine<T>(message, validations);
+            lock (_lockRead) {
+                CheckRedirected();
+                SysConsole.SetCursorPosition(x, y);
+                return ReadLine<T>(message, validations);
+            }
         }
 
         /// <summary>
@@ -87,9 +69,11 @@ namespace PowerConsole
         /// <returns>A validated value</returns>
         /// <exception cref="InvalidOperationException"> if the input or output streams are redirected</exception>
         public static T ReadLineAt<T>(string message, int x, int y, Func<T, ValidationResult> validationExpression, Color? readColor = null) {
-            CheckRedirected();
-            SysConsole.SetCursorPosition(x, y);
-            return ReadLine<T>(message, validationExpression, readColor);
+            lock (_lockRead) {
+                CheckRedirected();
+                SysConsole.SetCursorPosition(x, y);
+                return ReadLine<T>(message, validationExpression, readColor); 
+            }
         }
 
         /// <summary>
@@ -104,9 +88,11 @@ namespace PowerConsole
         /// <returns>A validated value</returns>
         /// <exception cref="InvalidOperationException"> if the input or output streams are redirected</exception>
         public static T ReadLineAt<T>(ColorToken message, int x, int y, Func<T, ValidationResult> validationExpression, Color? readColor = null) {
-            CheckRedirected();
-            SysConsole.SetCursorPosition(x, y);
-            return ReadLine<T>(message, validationExpression, readColor);
+            lock (_lockRead) {
+                CheckRedirected();
+                SysConsole.SetCursorPosition(x, y);
+                return ReadLine<T>(message, validationExpression, readColor); 
+            }
         }
 
         /// <summary>
@@ -122,9 +108,11 @@ namespace PowerConsole
         /// <returns>A validated value</returns>
         /// <exception cref="InvalidOperationException"> if the input or output streams are redirected</exception>
         public static T ReadLineAt<T>(string message, int x, int y, string errorMessage, Func<T, bool> validationExpression, Color? readColor = null) {
-            CheckRedirected();
-            SysConsole.SetCursorPosition(x, y);
-            return ReadLine(message, ConvertValidations(validationExpression, errorMessage), readColor);
+            lock (_lockRead) {
+                CheckRedirected();
+                SysConsole.SetCursorPosition(x, y);
+                return ReadLine(message, ConvertValidations(validationExpression, errorMessage), readColor); 
+            }
         }
 
         /// <summary>
@@ -139,9 +127,11 @@ namespace PowerConsole
         /// <returns>A validated value</returns>
         /// <exception cref="InvalidOperationException"> if the input or output streams are redirected</exception>
         public static T ReadLineAt<T>(string message, int x, int y, Func<T, bool> validationExpression, Color? readColor = null) {
-            CheckRedirected();
-            SysConsole.SetCursorPosition(x, y);
-            return ReadLine(message, ConvertValidations(validationExpression, null), readColor);
+            lock (_lockRead) {
+                CheckRedirected();
+                SysConsole.SetCursorPosition(x, y);
+                return ReadLine(message, ConvertValidations(validationExpression, null), readColor); 
+            }
         }
 
         /// <summary>
@@ -171,7 +161,9 @@ namespace PowerConsole
         /// <param name="validations">a validation object</param>
         /// <typeparam name="T">Type of the returned value</typeparam>
         public static T ReadLine<T>(string message, params ValidationAttribute[] validations) {
-            return ReadLine<T>(message, ConvertValidations<T>(validations));
+            lock (_lockRead) {
+                return ReadLine<T>(message, ConvertValidations<T>(validations)); 
+            }
         }
 
         /// <summary>
@@ -184,7 +176,9 @@ namespace PowerConsole
         /// <param name="readColor">Color of the user written text</param>
         /// <returns>A validated value</returns>
         public static T ReadLine<T>(string message, string errorMessage, Func<T, bool> validationExpression, Color? readColor = null) {
-            return ReadLine(message, ConvertValidations(validationExpression, errorMessage), readColor);
+            lock (_lockRead) {
+                return ReadLine(message, ConvertValidations(validationExpression, errorMessage), readColor); 
+            }
         }
 
         /// <summary>
@@ -196,7 +190,9 @@ namespace PowerConsole
         /// <param name="readColor">Color of the user written text</param>
         /// <returns>A validated value</returns>
         public static T ReadLine<T>(string message, Func<T, bool> validationExpression, Color? readColor = null) {
-            return ReadLine(message, ConvertValidations(validationExpression, null), readColor);
+            lock (_lockRead) {
+                return ReadLine(message, ConvertValidations(validationExpression, null), readColor); 
+            }
         }
 
         /// <summary>
@@ -220,37 +216,39 @@ namespace PowerConsole
         /// <param name="readColor">Color of the user written text</param>
         /// <returns>A validated value</returns>
         public static T ReadLine<T>(ColorToken message, Func<T, ValidationResult> validationExpression, Color? readColor = null) {
-        bool retry = false;
-            do {
-                string value = string.Empty;
-                int x = SysConsole.CursorLeft;
-                int y = SysConsole.CursorTop;
-                Write(message);
-                try {
-                    value = InternalRead(readColor ?? new Color(Colors.ForeColor, Colors.BackColor));
-                    T result = (T)Convert.ChangeType(value, typeof(T));
-                    var validationResult = validationExpression?.Invoke(result);
-                    if (validationResult != null) {
-                        throw new ValidationException(validationResult.ErrorMessage);
+            lock (_innerReadLock) {
+                bool retry = false;
+                do {
+                    string value = string.Empty;
+                    int x = SysConsole.CursorLeft;
+                    int y = SysConsole.CursorTop;
+                    Write(message);
+                    try {
+                        value = InternalRead(readColor ?? new Color(Colors.ForeColor, Colors.BackColor));
+                        T result = (T)Convert.ChangeType(value, typeof(T));
+                        var validationResult = validationExpression?.Invoke(result);
+                        if (validationResult != null) {
+                            throw new ValidationException(validationResult.ErrorMessage);
+                        }
+                        return result;
+                    } catch (Exception ex) {
+                        if (Options.ThrowErrorOnInvalidInput)
+                            throw;
+                        var reposition = false;
+                        foreach (IValidationBehavior behavior in Options.ValidationBehaviours) {
+                            reposition |= behavior.ShowMessage(ex.Message);         //if any of the behaviors need to reposition the cursor
+                        }
+                        if (reposition) {
+                            SysConsole.SetCursorPosition(x, y);
+                            SysConsole.Write(new string(' ', (message.Text?.Length ?? 0) + value.Length));
+                            SysConsole.CursorLeft = x;
+                        }
+                        retry = true;
                     }
-                    return result;
-                } catch (Exception ex) {
-                    if (Options.ThrowErrorOnInvalidInput)
-                        throw;
-                    var reposition = false;
-                    foreach (IValidationBehavior behavior in Options.ValidationBehaviours) {
-                        reposition |= behavior.ShowMessage(ex.Message);         //if any of the behaviors need to reposition the cursor
-                    }
-                    if (reposition) {
-                        SysConsole.SetCursorPosition(x, y);
-                        SysConsole.Write(new string(' ', (message.Text?.Length ?? 0) + value.Length));
-                        SysConsole.CursorLeft = x;
-                    }
-                    retry = true;
-                }
 
-            } while (retry);
-            return default(T);
+                } while (retry);
+                return default(T); 
+            }
         }
 
 

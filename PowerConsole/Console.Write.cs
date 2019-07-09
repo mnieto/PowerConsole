@@ -30,12 +30,14 @@ namespace PowerConsole
         /// <param name="value">The value to write</param>
         /// <param name="color">The color to use</param>
         public static void Write(string value, Color color) {
-            Color prevColor = new Color(SysConsole.ForegroundColor, SysConsole.BackgroundColor);
-            SysConsole.ForegroundColor = color.Foreground;
-            SysConsole.BackgroundColor = color.Background;
-            SysConsole.Write(value);
-            SysConsole.ForegroundColor = prevColor.Foreground;
-            SysConsole.BackgroundColor = prevColor.Background;
+            lock (_innerWriteLock) {
+                Color prevColor = new Color(SysConsole.ForegroundColor, SysConsole.BackgroundColor);
+                SysConsole.ForegroundColor = color.Foreground;
+                SysConsole.BackgroundColor = color.Background;
+                SysConsole.Write(value);
+                SysConsole.ForegroundColor = prevColor.Foreground;
+                SysConsole.BackgroundColor = prevColor.Background; 
+            }
         }
 
         /// <summary>
@@ -81,8 +83,10 @@ namespace PowerConsole
         /// <param name="x">The horizontal position</param>
         /// <param name="y">The vertical position</param>
         public static void WriteAt(string value, int x, int y) {
-            SysConsole.SetCursorPosition(x, y);
-            SysConsole.Write(value);
+            lock (_lockWrite) {
+                SysConsole.SetCursorPosition(x, y);
+                SysConsole.Write(value); 
+            }
         }
 
         /// <summary>
@@ -92,8 +96,10 @@ namespace PowerConsole
         /// <param name="x">The horizontal position</param>
         /// <param name="y">The vertical position</param>
         public static void WriteAt(object value, int x, int y) {
-            SysConsole.SetCursorPosition(x, y);
-            SysConsole.Write(value);
+            lock (_lockWrite) {
+                SysConsole.SetCursorPosition(x, y);
+                SysConsole.Write(value); 
+            }
         }
 
         /// <summary>
@@ -104,8 +110,10 @@ namespace PowerConsole
         /// <param name="y">The vertical position</param>
         /// <param name="color">The color to use</param>
         public static void WriteAt(string value, int x, int y, Color color) {
-            SysConsole.SetCursorPosition(x, y);
-            Write(value, color);
+            lock (_lockWrite) {
+                SysConsole.SetCursorPosition(x, y);
+                Write(value, color); 
+            }
         }
 
         /// <summary>
@@ -116,8 +124,10 @@ namespace PowerConsole
         /// <param name="y">The vertical position</param>
         /// <param name="color">The color to use</param>
         public static void WriteAt(object value, int x, int y, Color color) {
-            SysConsole.SetCursorPosition(x, y);
-            Write(value, color);
+            lock (_lockWrite) {
+                SysConsole.SetCursorPosition(x, y);
+                Write(value, color); 
+            }
         }
 
 
@@ -129,8 +139,10 @@ namespace PowerConsole
         /// <param name="value">The value to write</param>
         /// <param name="parser">A parser that implements <see cref="ITokenizeString"/></param>
         public static void WriteAt(string value, int x, int y, ITokenizeString parser) {
-            SysConsole.SetCursorPosition(x, y);
-            WriteAt(x, y, parser.Parse(value));
+            lock (_lockWrite) {
+                SysConsole.SetCursorPosition(x, y);
+                WriteAt(x, y, parser.Parse(value)); 
+            }
         }
 
         /// <summary>
@@ -140,9 +152,11 @@ namespace PowerConsole
         /// <param name="y">The vertical position</param>
         /// <param name="tokens">chunks of the string</param>
         public static void WriteAt(int x, int y, IEnumerable<ColorToken> tokens) {
-            SysConsole.SetCursorPosition(x, y);
-            foreach (var token in tokens) {
-                Write(token.Text, token.Color);
+            lock (_lockWrite) {
+                SysConsole.SetCursorPosition(x, y);
+                foreach (var token in tokens) {
+                    Write(token.Text, token.Color);
+                } 
             }
         }
 
@@ -192,12 +206,14 @@ namespace PowerConsole
         /// </summary>
         /// <param name="token">chunks of the string</param>
         public static void WriteLine(ColorToken token) {
-            Color prevColor = new Color(SysConsole.ForegroundColor, SysConsole.BackgroundColor);
-            SysConsole.ForegroundColor = token.Color.Foreground;
-            SysConsole.BackgroundColor = token.Color.Background;
-            SysConsole.WriteLine(token.Text);
-            SysConsole.ForegroundColor = prevColor.Foreground;
-            SysConsole.BackgroundColor = prevColor.Background;
+            lock (_innerWriteLock) {
+                Color prevColor = new Color(SysConsole.ForegroundColor, SysConsole.BackgroundColor);
+                SysConsole.ForegroundColor = token.Color.Foreground;
+                SysConsole.BackgroundColor = token.Color.Background;
+                SysConsole.WriteLine(token.Text);
+                SysConsole.ForegroundColor = prevColor.Foreground;
+                SysConsole.BackgroundColor = prevColor.Background; 
+            }
         }
 
         /// <summary>
@@ -205,8 +221,10 @@ namespace PowerConsole
         /// </summary>
         /// <param name="tokens">chunks of the string</param>
         public static void WriteLine(IEnumerable<ColorToken> tokens) {
-            Write(tokens);
-            SysConsole.WriteLine();
+            lock (_lockWrite) {
+                Write(tokens);
+                SysConsole.WriteLine(); 
+            }
         }
 
     }
