@@ -41,14 +41,21 @@ namespace PowerConsole
             var parser = new AcceleratorCharTokenizer(Color.Blue);
             Console.WriteLine("This is &your menu:", parser);
 
-            var menu = new Menu(new string[] {
+            //Create a menu
+            var choices = new string[] {
                 "Salad",
                 "Vegetables",
                 "Beans",
                 "Omelette"
+            };
+            var menu = new Menu(choices, new MenuOptions {
+                NumerationFormat = "  {0}.- ",
+                DefaultItem = "2"
             });
             string choice = menu.Show();
-            Console.WriteLine("Thanks for your choice");
+            Console.WriteLine($"Thanks for your choice: {choice}");
+
+
 
             System.Console.Write("Press any key to continue");
             System.Console.ReadKey();

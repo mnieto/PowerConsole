@@ -59,7 +59,26 @@ namespace PowerConsole.Components
                 }
                 i++;
             }
-            return Console.ReadLine<string>(Options.ReadMessage, x => Keys.Contains(x));
+            Console.Write(BuildMessage());
+            string value = Console.ReadLine<string>("", x => IsDefaultValue(x) || Keys.Contains(x));
+            return IsDefaultValue(value) ? Options.DefaultItem : value;
+        }
+
+        private bool IsDefaultValue(string value) {
+            return !string.IsNullOrEmpty(Options.DefaultItem) && value == string.Empty;
+        }
+
+        private IEnumerable<ColorToken> BuildMessage() {
+            if (string.IsNullOrEmpty(Options.DefaultItem)) {
+                return new List<ColorToken>() {
+                    new ColorToken(Options.ReadMessage)
+                };
+            } else {
+                string message = Options.ReadMessage;
+                if (!message.Contains("{0}"))
+                    message += "[{0}] ";
+                return HighlightPlaceholder(message, Options.DefaultItem);
+            }
         }
 
         private char GetAcceleratorChar(string item) {
@@ -70,18 +89,23 @@ namespace PowerConsole.Components
         }
 
         private (string, IEnumerable<ColorToken>) ComposeMenuItem(int index, string item) {
-            var regex = new Regex(@"(.*)\{0\}(.*)");
-            var match = regex.Match(Options.NumerationFormat);
-            if (!match.Success)
-                throw new InvalidOperationException($"{nameof(Options.NumerationFormat)} must contain the {{0}} placeholder");
             string key = GetChoiceValue(index);
+            var tokens = HighlightPlaceholder(Options.NumerationFormat, key);
+            tokens.Add(item);
+            return (key, tokens);
+        }
+
+        private List<ColorToken> HighlightPlaceholder(string format, string value) {
+            var regex = new Regex(@"(.*)\{0\}(.*)");
+            var match = regex.Match(format);
+            if (!match.Success)
+                throw new InvalidOperationException("Format string must contain the {0} placeholder");
             var tokens = new List<ColorToken> {
                 new ColorToken(match.Groups[1].Value),
-                new ColorToken(key, Options.HighLightColor),
-                new ColorToken(match.Groups[2].Value),
-                new ColorToken(item)
+                new ColorToken(value, Options.HighLightColor),
+                new ColorToken(match.Groups[2].Value)
             };
-            return (key, tokens);
+            return tokens;
         }
 
         private string GetChoiceValue(int index) {
@@ -129,8 +153,18 @@ namespace PowerConsole.Components
         public Color HighLightColor = new Color(Console.Colors.HighlightColor);
 
         /// <summary>
-        /// Text shown after the choices are listed, waiting the user input
+        /// Key value for the default choice. If the user press ENTER, this value is returned
         /// </summary>
+        public string DefaultItem { get; set; }
+
+        /// <summary>
+        /// Text shown after the choices are listed, waiting the user input.
+        /// </summary>
+        /// <remarks>
+        /// If <see cref="DefaultItem"/> contains any value, the <see cref="ReadMessage"/> 
+        /// can contain the {0} placeholder to show the default key value.
+        /// If the placeholder do not exists, it is added to the end of the message
+        /// </remarks>
         public string ReadMessage { get; set; } = "Type selected option ";
 
     }

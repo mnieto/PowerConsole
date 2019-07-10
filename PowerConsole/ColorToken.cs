@@ -43,5 +43,23 @@ namespace PowerConsole
         /// <param name="foreground">foreground color of the text</param>
         /// <param name="background">background color of the text</param>
         public ColorToken(string text, ConsoleColor foreground, ConsoleColor background) : this (text, new Color(foreground, background)) { }
+
+
+        /// <summary>
+        /// Implicit conversion from string to <see cref="ColorToken"/>
+        /// </summary>
+        /// <example>
+        /// This is useful to construct expressions like;
+        /// <code>
+        /// var tokens = new List&lt;ColorToken&gt;() {
+        ///     "Token with default color",
+        ///     "Blue text".OnBlue()
+        /// };
+        /// </code>
+        /// </example>
+        /// <param name="text"></param>
+        public static implicit operator ColorToken(string text) {
+            return new ColorToken(text);
+        }
     }
 }
