@@ -220,8 +220,14 @@ namespace PowerConsole
                 bool retry = false;
                 do {
                     string value = string.Empty;
-                    int x = SysConsole.CursorLeft;
-                    int y = SysConsole.CursorTop;
+                    int x = 1, y = 1;
+
+                    //For testing purposes, we redirect the input, so we can't get or set cursor position
+                    var isRedirected = SysConsole.IsInputRedirected || SysConsole.In.GetType() != typeof(System.IO.TextReader);
+                    if (!isRedirected) {    
+                        x = SysConsole.CursorLeft;
+                        y = SysConsole.CursorTop;
+                    }
                     Write(message);
                     try {
                         value = InternalRead(readColor ?? new Color(Colors.ForeColor, Colors.BackColor));
@@ -238,7 +244,7 @@ namespace PowerConsole
                         foreach (IValidationBehavior behavior in Options.ValidationBehaviours) {
                             reposition |= behavior.ShowMessage(ex.Message);         //if any of the behaviors need to reposition the cursor
                         }
-                        if (reposition) {
+                        if (reposition && !isRedirected) {
                             SysConsole.SetCursorPosition(x, y);
                             SysConsole.Write(new string(' ', (message.Text?.Length ?? 0) + value.Length));
                             SysConsole.CursorLeft = x;

@@ -23,7 +23,7 @@ namespace PowerConsole.Components
         /// <summary>
         /// Configuration options
         /// </summary>
-        protected MenuOptions Options { get; set; }
+        public MenuOptions Options { get; protected set; }
 
         /// <summary>
         /// Constructor
@@ -47,7 +47,7 @@ namespace PowerConsole.Components
         public string Show() {
             var tokenizer = new AcceleratorCharTokenizer();
             int i = 0;
-            
+            Keys.Clear();
             foreach (var item in Items) {
                 if (Options.NumerationStyle == MenuNumeration.AcceleratorKey) {
                     Console.WriteLine(tokenizer.Parse(item));
