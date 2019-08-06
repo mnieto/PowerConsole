@@ -257,6 +257,54 @@ namespace PowerConsole
             }
         }
 
+        /// <summary>
+        /// Read a password string
+        /// </summary>
+        /// <param name="showMask">If <c>true</c> shows an * char for each real char. If <c>fakse</c> doesn't show any char</param>
+        /// <remarks>
+        /// <para>Enter will end the password typing. The enter char is discarded, but a new line is written in Console</para>
+        /// <para>Delete key delete the last typed char</para>
+        /// <para>ESC key clear all typed chars and start again</para>
+        /// </remarks>
+        /// <returns>typed password. If the password is empty, returns <c>null</c></returns>
+        public static string ReadPassword(bool showMask = false) {
+            StringBuilder sb = new StringBuilder();
+            bool isEnter = false;
+            int len;
+            while (!isEnter) {
+                ConsoleKeyInfo key = SysConsole.ReadKey(true);
+                switch (key.Key) {
+                    case ConsoleKey.Backspace:
+                        len = sb.Length;
+                        if (len > 0) {
+                            if (showMask) Write("\b \b");
+                            sb = new StringBuilder(sb.ToString().Substring(0, len - 1));
+                        }
+                        continue;
+                    case ConsoleKey.Enter:
+                        sb.Append(key.KeyChar);
+                        WriteLine();
+                        isEnter = true;
+                        break;
+                    case ConsoleKey.Escape:
+                        if (showMask) {
+                            len = sb.Length;
+                            string back = new string('\b', len);
+                            Write(string.Concat(back, new string(' ', len), back));
+                        }
+                        sb.Clear();
+                        break;
+                    default:
+                        sb.Append(key.KeyChar);
+                        if (showMask) Write('*');
+                        break;
+                };
+            }
+            if (sb.Length > 0)
+                return sb.ToString();
+            return null;
+        }
+
 
         /// <summary>
         /// Reads the typed text, in the specified <see cref="Color"/>

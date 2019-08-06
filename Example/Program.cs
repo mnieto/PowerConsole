@@ -55,6 +55,10 @@ namespace PowerConsole
             string choice = menu.Show();
             Console.WriteLine($"Thanks for your choice: {choice}");
 
+            //Password reading
+            Console.WriteLine("Enter your password");
+            string pass = Console.ReadPassword(true);
+            Console.WriteLine($"This is your password {pass}");
 
 
             System.Console.Write("Press any key to continue");
