@@ -1,5 +1,6 @@
 using PowerConsole.ValidationBehaviour;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace PowerConsole
 {
@@ -21,7 +22,8 @@ namespace PowerConsole
         /// <param name="behavior"><see cref="IValidationBehavior"/> to add</param>
         /// <remarks>This method is a shortcut for adding from the <see cref="ValidationBehaviours"/> collection</remarks>
         public void AddValidationBehavior(IValidationBehavior behavior) {
-            ValidationBehaviours.Add(behavior);
+            if (!ValidationBehaviours.Any(x => x.GetType() == behavior.GetType()))
+                ValidationBehaviours.Add(behavior);
         }
 
         /// <summary>
