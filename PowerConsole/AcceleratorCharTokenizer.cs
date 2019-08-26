@@ -45,8 +45,8 @@ namespace PowerConsole
         /// <param name="defaultColor">Default color of the string. If <c>null</c> the current <see cref="DefaultColors.ForeColor"/> of <see cref="Console.Colors"/> is used</param>
         public AcceleratorCharTokenizer(char acceleratorChar = '&', Color? highlightColor = null, Color? defaultColor = null) {
             AcceleratorChar = acceleratorChar;
-            HighlightColor = highlightColor ?? new Color(Console.Colors.HighlightColor, Console.Colors.BackColor);
-            DefaultColor = defaultColor ?? new Color(Console.Colors.ForeColor, Console.Colors.BackColor);
+            HighlightColor = highlightColor ?? new Color(Console.Instance.Colors.HighlightColor, Console.Instance.Colors.BackColor);
+            DefaultColor = defaultColor ?? new Color(Console.Instance.Colors.ForeColor, Console.Instance.Colors.BackColor);
         }
 
         /// <summary>

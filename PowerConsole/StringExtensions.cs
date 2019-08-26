@@ -95,7 +95,7 @@ namespace PowerConsole
 
         /// <summary>Returns a <see cref="ColorToken"/> with background color set to <paramref name="backColor"/></summary>
         public static ColorToken On(this string text, ConsoleColor backColor) {
-            return new ColorToken(text, new Color(Console.Colors.ForeColor, backColor));
+            return new ColorToken(text, new Color(Console.Instance.Colors.ForeColor, backColor));
         }
 
         /// <summary>Returns a <see cref="ColorToken"/> with background color set to Black</summary>

@@ -74,12 +74,12 @@ namespace PowerConsole.Test
 
             Assert.Equal(3, tokens.Count());
             var token = tokens.First();
-            Assert.Equal(Console.Colors.ForeColor, token.Color.Foreground);
-            Assert.Equal(Console.Colors.BackColor, token.Color.Background);
+            Assert.Equal(Console.Instance.Colors.ForeColor, token.Color.Foreground);
+            Assert.Equal(Console.Instance.Colors.BackColor, token.Color.Background);
 
             token = tokens.Skip(1).First();
-            Assert.Equal(Console.Colors.HighlightColor, token.Color.Foreground);
-            Assert.Equal(Console.Colors.BackColor, token.Color.Background);
+            Assert.Equal(Console.Instance.Colors.HighlightColor, token.Color.Foreground);
+            Assert.Equal(Console.Instance.Colors.BackColor, token.Color.Background);
 
         }
     }

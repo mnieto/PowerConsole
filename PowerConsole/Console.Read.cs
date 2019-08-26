@@ -10,159 +10,53 @@ namespace PowerConsole
     /// <summary>
     /// Console main class
     /// </summary>
-    public partial class Console
+    public partial class Console : IConsole
     {
 
         /// <summary>
-        /// Position the cursor in a coordinate and reads a value of type T from console. Repeat the input until the typed value is valid.
+        /// Reads a value of type T from console. Repeat the input until the typed value is valid.
         /// </summary>
-        /// <param name="message">Optional prompt message</param>
-        /// <param name="x">horizontal position. If <paramref name="message" /> is specified, the x position is the starting coordinate of the message. Position is zero based</param>
-        /// <param name="y">vertical position. If <paramref name="message"/> is specified, the x position is the starting coordinate of the message. Position is zero based</param>
-        /// <param name="readColor">Color of the user written text</param>
         /// <typeparam name="T">Type of the returned value</typeparam>
-        /// <exception cref="InvalidOperationException"> if the input or output streams are redirected</exception>
-        public static T ReadLineAt<T>(string message, int x, int y, Color? readColor = null) {
-            return ReadLineAt<T>(message, x, y, v => null, readColor);
-        }
-
-
-        /// <summary>
-        /// Position the cursor in a coordinate and reads a value of type T from console. Repeat the input until the typed value is valid.
-        /// </summary>
-        /// <param name="message">Optional prompt message, with color specification</param>
-        /// <param name="x">horizontal position. If <paramref name="message" /> is specified, the x position is the starting coordinate of the message. Position is zero based</param>
-        /// <param name="y">vertical position. If <paramref name="message"/> is specified, the x position is the starting coordinate of the message. Position is zero based</param>
         /// <param name="readColor">Color of the user written text</param>
-        /// <typeparam name="T">Type of the returned value</typeparam>
-        /// <exception cref="InvalidOperationException"> if the input or output streams are redirected</exception>
-        public static T ReadLineAt<T>(ColorToken message, int x, int y, Color? readColor = null) {
-            return ReadLineAt<T>(message, x, y, v => null, readColor);
+        public T ReadLine<T>(Color? readColor = null) {
+            return ReadLine<T>(x => null, readColor);
         }
 
         /// <summary>
-        /// Position the cursor in a coordinate and reads a value of type T from console. Repeat the input until the typed value is valid.
+        /// Reads a value of type T from console. Repeat the input until the typed value is valid.
         /// </summary>
-        /// <param name="message">Optional prompt message</param>
-        /// <param name="x">horizontal position. If <paramref name="message" /> is specified, the x position is the starting coordinate of the message. Position is zero based</param>
-        /// <param name="y">vertical position. If <paramref name="message"/> is specified, the x position is the starting coordinate of the message. Position is zero based</param>
         /// <param name="validations">a validation object</param>
         /// <typeparam name="T">Type of the returned value</typeparam>
-        /// <exception cref="InvalidOperationException"> if the input or output streams are redirected</exception>
-        public static T ReadLineAt<T>(string message, int x, int y, params ValidationAttribute[] validations) {
+        public T ReadLine<T>(params ValidationAttribute[] validations) {
             lock (_lockRead) {
-                CheckRedirected();
-                SysConsole.SetCursorPosition(x, y);
-                return ReadLine<T>(message, validations);
+                return ReadLine<T>(ConvertValidations<T>(validations)); 
             }
         }
 
         /// <summary>
-        /// Position the cursor in a coordinate and reads a value of type T from console. Repeat the input until the typed value is valid.
+        /// Reads a value of type T from console. Repeat the input until the typed value is valid.
         /// </summary>
         /// <typeparam name="T">Type of the returned value</typeparam>
-        /// <param name="message">Optional prompt message</param>
-        /// <param name="x">horizontal position. If <paramref name="message" /> is specified, the x position is the starting coordinate of the message. Position is zero based</param>
-        /// <param name="y">vertical position. If <paramref name="message"/> is specified, the x position is the starting coordinate of the message. Position is zero based</param>
-        /// <param name="validationExpression">Function that receives the input value and returns a <see cref="ValidationResult"/> object</param>
-        /// <param name="readColor">Color of the user written text</param>
-        /// <returns>A validated value</returns>
-        /// <exception cref="InvalidOperationException"> if the input or output streams are redirected</exception>
-        public static T ReadLineAt<T>(string message, int x, int y, Func<T, ValidationResult> validationExpression, Color? readColor = null) {
-            lock (_lockRead) {
-                CheckRedirected();
-                SysConsole.SetCursorPosition(x, y);
-                return ReadLine<T>(message, validationExpression, readColor); 
-            }
-        }
-
-        /// <summary>
-        /// Position the cursor in a coordinate and reads a value of type T from console. Repeat the input until the typed value is valid.
-        /// </summary>
-        /// <typeparam name="T">Type of the returned value</typeparam>
-        /// <param name="message">Optional prompt message, with color specification</param>
-        /// <param name="x">horizontal position. If <paramref name="message" /> is specified, the x position is the starting coordinate of the message. Position is zero based</param>
-        /// <param name="y">vertical position. If <paramref name="message"/> is specified, the x position is the starting coordinate of the message. Position is zero based</param>
-        /// <param name="validationExpression">Function that receives the input value and returns a <see cref="ValidationResult"/> object</param>
-        /// <param name="readColor">Color of the user written text</param>
-        /// <returns>A validated value</returns>
-        /// <exception cref="InvalidOperationException"> if the input or output streams are redirected</exception>
-        public static T ReadLineAt<T>(ColorToken message, int x, int y, Func<T, ValidationResult> validationExpression, Color? readColor = null) {
-            lock (_lockRead) {
-                CheckRedirected();
-                SysConsole.SetCursorPosition(x, y);
-                return ReadLine<T>(message, validationExpression, readColor); 
-            }
-        }
-
-        /// <summary>
-        /// Position the cursor in a coordinate and reads a value of type T from console. Repeat the input until the typed value is valid.
-        /// </summary>
-        /// <typeparam name="T">Type of the returned value</typeparam>
-        /// <param name="message">Optional prompt message</param>
-        /// <param name="x">horizontal position. If <paramref name="message" /> is specified, the x position is the starting coordinate of the message. Position is zero based</param>
-        /// <param name="y">vertical position. If <paramref name="message"/> is specified, the x position is the starting coordinate of the message. Position is zero based</param>
         /// <param name="errorMessage">Error message to be shown in case of the input value is not valid</param>
         /// <param name="validationExpression">Function that receives the input value and returns <c>true</c> if it is valid or <c>false</c> if the input value is not valid</param>
         /// <param name="readColor">Color of the user written text</param>
         /// <returns>A validated value</returns>
-        /// <exception cref="InvalidOperationException"> if the input or output streams are redirected</exception>
-        public static T ReadLineAt<T>(string message, int x, int y, string errorMessage, Func<T, bool> validationExpression, Color? readColor = null) {
+        public T ReadLine<T>(string errorMessage, Func<T, bool> validationExpression, Color? readColor = null) {
             lock (_lockRead) {
-                CheckRedirected();
-                SysConsole.SetCursorPosition(x, y);
-                return ReadLine(message, ConvertValidations(validationExpression, errorMessage), readColor); 
+                return ReadLine(ConvertValidations(validationExpression, errorMessage), readColor); 
             }
         }
 
         /// <summary>
-        /// Position the cursor in a coordinate and reads a value of type T from console. Repeat the input until the typed value is valid.
+        /// Reads a value of type T from console. Repeat the input until the typed value is valid.
         /// </summary>
         /// <typeparam name="T">Type of the returned value</typeparam>
-        /// <param name="message">Optional prompt message</param>
-        /// <param name="x">horizontal position. If <paramref name="message" /> is specified, the x position is the starting coordinate of the message. Position is zero based</param>
-        /// <param name="y">vertical position. If <paramref name="message"/> is specified, the x position is the starting coordinate of the message. Position is zero based</param>
         /// <param name="validationExpression">Function that receives the input value and returns <c>true</c> if it is valid or <c>false</c> if the input value is not valid</param>
         /// <param name="readColor">Color of the user written text</param>
         /// <returns>A validated value</returns>
-        /// <exception cref="InvalidOperationException"> if the input or output streams are redirected</exception>
-        public static T ReadLineAt<T>(string message, int x, int y, Func<T, bool> validationExpression, Color? readColor = null) {
+        public T ReadLine<T>(Func<T, bool> validationExpression, Color? readColor = null) {
             lock (_lockRead) {
-                CheckRedirected();
-                SysConsole.SetCursorPosition(x, y);
-                return ReadLine(message, ConvertValidations(validationExpression, null), readColor); 
-            }
-        }
-
-        /// <summary>
-        /// Reads a value of type T from console. Repeat the input until the typed value is valid.
-        /// </summary>
-        /// <param name="message">Optional prompt message, with color specification</param>
-        /// <typeparam name="T">Type of the returned value</typeparam>
-        /// <param name="readColor">Color of the user written text</param>
-        public static T ReadLine<T>(ColorToken message, Color? readColor = null) {
-            return ReadLine<T>(message, x => null, readColor);
-        }
-
-        /// <summary>
-        /// Reads a value of type T from console. Repeat the input until the typed value is valid.
-        /// </summary>
-        /// <param name="message">Optional prompt message</param>
-        /// <typeparam name="T">Type of the returned value</typeparam>
-        /// <param name="readColor">Color of the user written text</param>
-        public static T ReadLine<T>(string message, Color? readColor = null) {
-            return ReadLine<T>(message, x => null, readColor);
-        }
-
-        /// <summary>
-        /// Reads a value of type T from console. Repeat the input until the typed value is valid.
-        /// </summary>
-        /// <param name="message">Optional prompt message</param>
-        /// <param name="validations">a validation object</param>
-        /// <typeparam name="T">Type of the returned value</typeparam>
-        public static T ReadLine<T>(string message, params ValidationAttribute[] validations) {
-            lock (_lockRead) {
-                return ReadLine<T>(message, ConvertValidations<T>(validations)); 
+                return ReadLine(ConvertValidations(validationExpression, null), readColor); 
             }
         }
 
@@ -170,52 +64,10 @@ namespace PowerConsole
         /// Reads a value of type T from console. Repeat the input until the typed value is valid.
         /// </summary>
         /// <typeparam name="T">Type of the returned value</typeparam>
-        /// <param name="message">Optional prompt message</param>
-        /// <param name="errorMessage">Error message to be shown in case of the input value is not valid</param>
-        /// <param name="validationExpression">Function that receives the input value and returns <c>true</c> if it is valid or <c>false</c> if the input value is not valid</param>
-        /// <param name="readColor">Color of the user written text</param>
-        /// <returns>A validated value</returns>
-        public static T ReadLine<T>(string message, string errorMessage, Func<T, bool> validationExpression, Color? readColor = null) {
-            lock (_lockRead) {
-                return ReadLine(message, ConvertValidations(validationExpression, errorMessage), readColor); 
-            }
-        }
-
-        /// <summary>
-        /// Reads a value of type T from console. Repeat the input until the typed value is valid.
-        /// </summary>
-        /// <typeparam name="T">Type of the returned value</typeparam>
-        /// <param name="message">Optional prompt message</param>
-        /// <param name="validationExpression">Function that receives the input value and returns <c>true</c> if it is valid or <c>false</c> if the input value is not valid</param>
-        /// <param name="readColor">Color of the user written text</param>
-        /// <returns>A validated value</returns>
-        public static T ReadLine<T>(string message, Func<T, bool> validationExpression, Color? readColor = null) {
-            lock (_lockRead) {
-                return ReadLine(message, ConvertValidations(validationExpression, null), readColor); 
-            }
-        }
-
-        /// <summary>
-        /// Reads a value of type T from console. Repeat the input until the typed value is valid.
-        /// </summary>
-        /// <typeparam name="T">Type of the returned value</typeparam>
-        /// <param name="message">Optional prompt message</param>
         /// <param name="validationExpression">Function that receives the input value and returns a <see cref="ValidationResult"/> object</param>
         /// <param name="readColor">Color of the user written text</param>
         /// <returns>A validated value</returns>
-        public static T ReadLine<T>(string message, Func<T, ValidationResult> validationExpression, Color? readColor = null) {
-            return ReadLine<T>(new ColorToken(message), validationExpression, readColor);
-        }
-
-        /// <summary>
-        /// Reads a value of type T from console. Repeat the input until the typed value is valid.
-        /// </summary>
-        /// <typeparam name="T">Type of the returned value</typeparam>
-        /// <param name="message">Optional prompt message</param>
-        /// <param name="validationExpression">Function that receives the input value and returns a <see cref="ValidationResult"/> object</param>
-        /// <param name="readColor">Color of the user written text</param>
-        /// <returns>A validated value</returns>
-        public static T ReadLine<T>(ColorToken message, Func<T, ValidationResult> validationExpression, Color? readColor = null) {
+        public T ReadLine<T>(Func<T, ValidationResult> validationExpression, Color? readColor = null) {
             lock (_innerReadLock) {
                 bool retry = false;
                 do {
@@ -228,7 +80,6 @@ namespace PowerConsole
                         x = SysConsole.CursorLeft;
                         y = SysConsole.CursorTop;
                     }
-                    Write(message);
                     try {
                         value = InternalRead(readColor ?? new Color(Colors.ForeColor, Colors.BackColor));
                         T result = (T)Convert.ChangeType(value, typeof(T));
@@ -246,7 +97,7 @@ namespace PowerConsole
                         }
                         if (reposition && !isRedirected) {
                             SysConsole.SetCursorPosition(x, y);
-                            SysConsole.Write(new string(' ', (message.Text?.Length ?? 0) + value.Length));
+                            SysConsole.Write(new string(' ', value.Length));
                             SysConsole.CursorLeft = x;
                         }
                         retry = true;
@@ -267,7 +118,7 @@ namespace PowerConsole
         /// <para>ESC key clear all typed chars and start again</para>
         /// </remarks>
         /// <returns>typed password. If the password is empty, returns <c>null</c></returns>
-        public static string ReadPassword(bool showMask = false) {
+        public string ReadPassword(bool showMask = false) {
             StringBuilder sb = new StringBuilder();
             bool isEnter = false;
             int len;
@@ -322,23 +173,13 @@ namespace PowerConsole
         }
 
         /// <summary>
-        /// Raises an <see cref="InvalidOperationException"/> exception if the Console streams, StdIn or StdOut are redirected
-        /// </summary>
-        protected static void CheckRedirected() {
-            if (SysConsole.IsInputRedirected || SysConsole.IsOutputRedirected) {
-                throw new InvalidOperationException("Can't set cursor position on redirected stream");
-            }
-        }
-
-
-        /// <summary>
         /// Converts a user friendly format of specify a validation and error message to the internal <see cref="ValidationResult"/>
         /// </summary>
         /// <typeparam name="T">Type of the input value</typeparam>
         /// <param name="validationExpression">Function that receives the input value and returns <c>true</c> if the input value is valid; otherwise, it returns <c>false</c></param>
         /// <param name="errorMessage">Error message to be shown in case of the input value is not valid</param>
         /// <returns>Function to be invoked after the user type the input value and convert <paramref name="validationExpression"/> to the internal <see cref="ValidationResult"/></returns>
-        protected static Func<T, ValidationResult> ConvertValidations<T>(Func<T, bool> validationExpression, string errorMessage) {
+        protected Func<T, ValidationResult> ConvertValidations<T>(Func<T, bool> validationExpression, string errorMessage) {
             Func<T, ValidationResult> Validator = x => {
                 if (validationExpression(x))
                     return ValidationResult.Success;
@@ -353,7 +194,7 @@ namespace PowerConsole
         /// <typeparam name="T">Type of the input value</typeparam>
         /// <param name="validations">ValidationAttribute descendants that validate the invput value</param>
         /// <returns>Function to be invoked after the user type the input value and convert <paramref name="validations"/> to the internal <see cref="ValidationResult"/></returns>
-        protected static Func<T, ValidationResult> ConvertValidations<T>(ValidationAttribute[] validations) {
+        protected Func<T, ValidationResult> ConvertValidations<T>(ValidationAttribute[] validations) {
             if (validations == null)
                 return x => ValidationResult.Success;
 

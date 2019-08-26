@@ -19,7 +19,7 @@ namespace PowerConsole
         /// Foreground color. If not assigned, it will return the current assigned <see cref="DefaultColors.ForeColor"/> of <see cref="Console.Colors"/>
         /// </summary>
         public ConsoleColor Foreground {
-            get => _foreground ?? Console.Colors.ForeColor;
+            get => _foreground ?? Console.Instance.Colors.ForeColor;
             set => _foreground = value;
         }
 
@@ -27,7 +27,7 @@ namespace PowerConsole
         /// Background color. If not assigned, it will return the current assigned <see cref="DefaultColors.BackColor"/> of <see cref="Console.Colors"/>
         /// </summary>
         public ConsoleColor Background {
-            get => _background ?? Console.Colors.BackColor;
+            get => _background ?? Console.Instance.Colors.BackColor;
             set => _background = value;
         }
 

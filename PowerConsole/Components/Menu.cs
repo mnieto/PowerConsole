@@ -10,6 +10,9 @@ namespace PowerConsole.Components
     /// </summary>
     public class Menu
     {
+
+        private IConsole console = Console.Instance;
+
         /// <summary>
         /// List of choices
         /// </summary>
@@ -50,17 +53,17 @@ namespace PowerConsole.Components
             Keys.Clear();
             foreach (var item in Items) {
                 if (Options.NumerationStyle == MenuNumeration.AcceleratorKey) {
-                    Console.WriteLine(tokenizer.Parse(item));
+                    console.WriteLine(tokenizer.Parse(item));
                     Keys.Add(GetAcceleratorChar(item).ToString());
                 } else {
                     (string key, IEnumerable<ColorToken> tokens) = ComposeMenuItem(i, item);
-                    Console.WriteLine(tokens);
+                    console.WriteLine(tokens);
                     Keys.Add(key);
                 }
                 i++;
             }
-            Console.Write(BuildMessage());
-            string value = Console.ReadLine<string>("", x => IsDefaultValue(x) || Keys.Contains(x));
+            console.Write(BuildMessage());
+            string value = console.ReadLine<string>("", x => IsDefaultValue(x) || Keys.Contains(x));
             return IsDefaultValue(value) ? Options.DefaultItem : value;
         }
 
@@ -150,7 +153,7 @@ namespace PowerConsole.Components
         /// <summary>
         /// Used color to highlight the selection char. Default: the specified HightLightColor in <see cref="Console.Colors"/>
         /// </summary>
-        public Color HighLightColor = new Color(Console.Colors.HighlightColor);
+        public Color HighLightColor = new Color(Console.Instance.Colors.HighlightColor);
 
         /// <summary>
         /// Key value for the default choice. If the user press ENTER, this value is returned

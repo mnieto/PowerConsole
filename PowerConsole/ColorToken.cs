@@ -33,7 +33,7 @@ namespace PowerConsole
             if (color.HasValue)
                 Color = color.Value;
             else
-                Color = new Color(Console.Colors.ForeColor, Console.Colors.BackColor);
+                Color = new Color(Console.Instance.Colors.ForeColor, Console.Instance.Colors.BackColor);
         }
 
         /// <summary>

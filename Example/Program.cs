@@ -8,38 +8,39 @@ namespace PowerConsole
     {
         static void Main(string[] args) {
 
-
-            Console.Configure(cfg => {
+            var console = Console.Create(cfg => {
                 cfg.AddValidationBehavior(new CustomBehaviour(() => System.Console.Beep(), false));
             });
 
-            Console.WriteLine("Hello World!".White().OnRed());
+            console.WriteLine("Hello World!".White().OnRed());
 
             //Simple read without validation
-            string name = Console.ReadLine<string>("What's your name? ".Blue(), Color.Yellow);
+            string name = console.Write("What's your name? ".Blue()).ReadLine<string>(Color.Yellow);
 
             //Using ValidationAttribute
             var ageValidator = new RangeAttribute(18, int.MaxValue) {
                 ErrorMessage = "You must be an adult"
             };
-            int age = Console.ReadLine<int>($"What's your age, {name}? ", ageValidator);
+            int age = console.Write($"What's your age, {name}? ").ReadLine<int>(ageValidator);
 
             //Using custom validation
             const string pattern = @"\d{9}";
-            string phone = Console.ReadLine<string>("And your phone? ", "It's not a valid phone number",
-                x => System.Text.RegularExpressions.Regex.IsMatch(x, pattern),
-                new Color(null, System.ConsoleColor.DarkBlue));
+            string phone = console
+                .Write("And your phone? ")
+                .ReadLine<string>("It's not a valid phone number",
+                            x => System.Text.RegularExpressions.Regex.IsMatch(x, pattern),
+                            new Color(null, System.ConsoleColor.DarkRed));
 
             //Using regex to highlight matching text
             var tokenizer = new RegexTokenizer(pattern, new Color(System.ConsoleColor.White));
-            Console.WriteLine(tokenizer.Parse($"We have updated your {phone} number"));
+            console.WriteLine(tokenizer.Parse($"We have updated your {phone} number"));
 
             //Using custom validation without message
-            bool guessValidResponse = Console.ReadLine<bool>("Are you happy? ", x => x == true, Color.Yellow);
+            bool guessValidResponse = console.Write("Are you happy? ").ReadLine<bool>(x => x == true, Color.Yellow);
 
             //Parse string
             var parser = new AcceleratorCharTokenizer(Color.Blue);
-            Console.WriteLine("This is &your menu:", parser);
+            console.WriteLine("This is &your menu:", parser);
 
             //Create a menu
             var choices = new string[] {
@@ -53,12 +54,12 @@ namespace PowerConsole
                 DefaultItem = "2"
             });
             string choice = menu.Show();
-            Console.WriteLine($"Thanks for your choice: {choice}");
+            console.WriteLine($"Thanks for your choice: {choice}");
 
             //Password reading
-            Console.WriteLine("Enter your password");
-            string pass = Console.ReadPassword(true);
-            Console.WriteLine($"This is your password {pass}");
+            console.WriteLine("Enter your password");
+            string pass = console.ReadPassword(true);
+            console.WriteLine($"This is your password {pass}");
 
 
             System.Console.Write("Press any key to continue");

@@ -51,7 +51,7 @@ namespace PowerConsole.ValidationBehaviour {
             //https://stackoverflow.com/questions/12355378/read-from-location-on-console-c-sharp
             //https://docs.microsoft.com/en-us/windows/console/reading-and-writing-blocks-of-characters-and-attributes
             SysConsole.SetCursorPosition(0, SysConsole.WindowTop + SysConsole.WindowHeight - 1);
-            SysConsole.ForegroundColor = Console.Colors.ErrorColor;
+            SysConsole.ForegroundColor = Console.Instance.Colors.ErrorColor;
             SysConsole.Write(message);
 
             //Wait and restore phase
