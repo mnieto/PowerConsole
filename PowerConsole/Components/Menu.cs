@@ -11,7 +11,7 @@ namespace PowerConsole.Components
     public class Menu
     {
 
-        private IConsole console = Console.Instance;
+        private IConsole Console { get; set; }
 
         /// <summary>
         /// List of choices
@@ -31,17 +31,28 @@ namespace PowerConsole.Components
         /// <summary>
         /// Constructor
         /// </summary>
+        /// <param name="console">injected console</param>
         /// <param name="choices">list of options</param>
         /// <param name="options">Menu configuration. If <c>null</c> default configuration is used</param>
         /// <exception cref="ArgumentNullException">if <paramref name="choices"/> is null</exception>
         /// <exception cref="ArgumentOutOfRangeException">if the number of choices are less than one or more than 25 (from a to z)</exception>
-        public Menu(IEnumerable<string> choices, MenuOptions options = null) {
+        public Menu(IConsole console, IEnumerable<string> choices, MenuOptions options = null) {
+            Console = console ?? PowerConsole.Console.Instance;
             Items = choices ?? throw new ArgumentNullException(nameof(choices));
             int items = choices.Count();
             if (items == 0 || items > 25)
                 throw new ArgumentOutOfRangeException("Choices list must have one or more items and less than 26", nameof(choices));
             Options = options ?? new MenuOptions();
         }
+
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="choices">list of options</param>
+        /// <param name="options">Menu configuration. If <c>null</c> default configuration is used</param>
+        /// <exception cref="ArgumentNullException">if <paramref name="choices"/> is null</exception>
+        /// <exception cref="ArgumentOutOfRangeException">if the number of choices are less than one or more than 25 (from a to z)</exception>
+        public Menu(IEnumerable<string> choices, MenuOptions options = null) : this(null, choices, options) { }
 
         /// <summary>
         /// Shows the menu items and return the user's choice
@@ -53,17 +64,17 @@ namespace PowerConsole.Components
             Keys.Clear();
             foreach (var item in Items) {
                 if (Options.NumerationStyle == MenuNumeration.AcceleratorKey) {
-                    console.WriteLine(tokenizer.Parse(item));
+                    Console.WriteLine(tokenizer.Parse(item));
                     Keys.Add(GetAcceleratorChar(item).ToString());
                 } else {
                     (string key, IEnumerable<ColorToken> tokens) = ComposeMenuItem(i, item);
-                    console.WriteLine(tokens);
+                    Console.WriteLine(tokens);
                     Keys.Add(key);
                 }
                 i++;
             }
-            console.Write(BuildMessage());
-            string value = console.ReadLine<string>("", x => IsDefaultValue(x) || Keys.Contains(x));
+            Console.Write(BuildMessage());
+            string value = Console.ReadLine<string>("", x => IsDefaultValue(x) || Keys.Contains(x));
             return IsDefaultValue(value) ? Options.DefaultItem : value;
         }
 
