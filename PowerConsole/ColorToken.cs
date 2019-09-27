@@ -62,4 +62,19 @@ namespace PowerConsole
             return new ColorToken(text);
         }
     }
+
+    internal class ColorTokenItem : ColorToken
+    {
+        public ColorTokenItem(ColorToken token) : base(token.Text, token.Color) { }
+
+        public ColorTokenItem(ColorToken token, bool newLine) : base(token.Text, token.Color) {
+            NewLine = newLine;
+        }
+
+        public ColorTokenItem(string text, Color? color = null, bool newLine = false) : base(text, color) {
+            NewLine = newLine;
+        }
+
+        public bool NewLine { get; set; } 
+    }
 }

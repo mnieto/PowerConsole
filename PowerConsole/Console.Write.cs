@@ -13,6 +13,9 @@ namespace PowerConsole
         /// <param name="value">The value to write</param>
         public IConsole Write(string value) {
             SysConsole.Write(value);
+            if (addToBuffer) {
+                questionBuffer.Add(new ColorTokenItem(value, false));
+            }
             return this;
         }
 
@@ -22,6 +25,9 @@ namespace PowerConsole
         /// <param name="value">The value to write</param>
         public IConsole Write(object value) {
             SysConsole.Write(value);
+            if (addToBuffer) {
+                questionBuffer.Add(new ColorTokenItem(value.ToString(), false));
+            }
             return this;
         }
 
@@ -39,6 +45,9 @@ namespace PowerConsole
                 SysConsole.Write(value);
                 SysConsole.ForegroundColor = prevColor.Foreground;
                 SysConsole.BackgroundColor = prevColor.Background;
+            }
+            if (addToBuffer) {
+                questionBuffer.Add(new ColorTokenItem(value, color));
             }
             return this;
         }
@@ -85,6 +94,9 @@ namespace PowerConsole
         /// </summary>
         public IConsole WriteLine() {
             SysConsole.WriteLine();
+            if (addToBuffer) {
+                questionBuffer.Add(new ColorTokenItem("", true));
+            }
             return this;
         }
 
@@ -94,6 +106,9 @@ namespace PowerConsole
         /// <param name="value">The value to write</param>
         public IConsole WriteLine(string value) {
             SysConsole.WriteLine(value);
+            if (addToBuffer) {
+                questionBuffer.Add(new ColorTokenItem(value, true));
+            }
             return this;
         }
 
@@ -103,6 +118,9 @@ namespace PowerConsole
         /// <param name="value">The value to write</param>
         public IConsole WriteLine(object value) {
             SysConsole.WriteLine(value);
+            if (addToBuffer) {
+                questionBuffer.Add(new ColorTokenItem(value.ToString(), true));
+            }
             return this;
         }
 
@@ -139,6 +157,9 @@ namespace PowerConsole
                 SysConsole.ForegroundColor = prevColor.Foreground;
                 SysConsole.BackgroundColor = prevColor.Background;
             }
+            if (addToBuffer) {
+                questionBuffer.Add(new ColorTokenItem(token, true));
+            }
             return this;
         }
 
@@ -149,7 +170,7 @@ namespace PowerConsole
         public IConsole WriteLine(IEnumerable<ColorToken> tokens) {
             lock (_lockWrite) {
                 Write(tokens);
-                SysConsole.WriteLine();
+                WriteLine();
             }
             return this;
         }

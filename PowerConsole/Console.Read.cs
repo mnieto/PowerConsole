@@ -87,6 +87,8 @@ namespace PowerConsole
                         if (validationResult != null) {
                             throw new ValidationException(validationResult.ErrorMessage);
                         }
+                        addToBuffer = false;
+                        questionBuffer.Clear();
                         return result;
                     } catch (Exception ex) {
                         if (Options.ThrowErrorOnInvalidInput)
@@ -100,10 +102,13 @@ namespace PowerConsole
                             SysConsole.Write(new string(' ', value.Length));
                             SysConsole.CursorLeft = x;
                         }
+                        RepeatQuestion();
                         retry = true;
                     }
 
                 } while (retry);
+                addToBuffer = false;
+                questionBuffer.Clear();
                 return default(T); 
             }
         }
@@ -213,6 +218,20 @@ namespace PowerConsole
             return Validator;
         }
 
+        private void RepeatQuestion() {
+            bool previousState = addToBuffer;
+            addToBuffer = false;
+            try {
+                foreach (ColorTokenItem item in questionBuffer) {
+                    if (item.NewLine)
+                        WriteLine(item);
+                    else
+                        Write(item);
+                }
+            } finally {
+                addToBuffer = previousState;
+            }
+        }
 
 
     }

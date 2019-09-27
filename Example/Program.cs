@@ -21,11 +21,12 @@ namespace PowerConsole
             var ageValidator = new RangeAttribute(18, int.MaxValue) {
                 ErrorMessage = "You must be an adult"
             };
-            int age = console.Write($"What's your age, {name}? ").ReadLine<int>(ageValidator);
+            int age = console.Ask($"What's your age, {name}? ").ReadLine<int>(ageValidator);
 
             //Using custom validation
             const string pattern = @"\d{9}";
             string phone = console
+                .Ask()
                 .Write("And your phone? ")
                 .ReadLine<string>("It's not a valid phone number",
                             x => System.Text.RegularExpressions.Regex.IsMatch(x, pattern),

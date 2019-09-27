@@ -42,6 +42,76 @@ namespace PowerConsole
         /// </summary>
         public static IConsole Instance => console;
 
+        private List<ColorTokenItem> questionBuffer = new List<ColorTokenItem>();
+        private bool addToBuffer = true;
+
+        /// <summary>
+        /// Activates the "question buffer". If text entered in any Read method is not valid, the question is prompted again to the user
+        /// </summary>
+        /// <remarks>
+        /// <para>
+        /// The "question buffer acts in a way that any Write* method stores the written values. 
+        /// If text entered in any Read method is not valid, the question is prompted again to the user
+        /// until a valid input is entered. In that moment the buffer is cleared
+        /// </para>
+        /// <para>
+        /// Do not mix this overload with any other Ask overloads, as the rest of overloads have the same behavior than the Write* methods,
+        /// but the Ask version save the message into the buffer
+        /// </para>
+        /// </remarks>
+        /// <example>
+        /// <code>
+        ///     string phone = console
+        ///         .Ask()
+        ///         .Write("Type your phone ")
+        ///         .ReadLine&lt;string&gt;("It's not a valid phone number", x =&gt; x.Length == 9);
+        /// </code>
+        /// </example>
+        public IConsole Ask() {
+            questionBuffer.Clear();
+            addToBuffer = true;
+            return this;
+        }
+
+        /// <summary>
+        /// Writes a <paramref name="message"/> and stores it in the question buffer in case the response is not valid
+        /// </summary>
+        /// <param name="message">text to be shown</param>
+        public IConsole Ask(IEnumerable<ColorToken> message) {
+            questionBuffer.Clear();
+            foreach (ColorToken item in message) {
+                questionBuffer.Add(new ColorTokenItem(item));
+            }
+            Write(message);
+            addToBuffer = false;
+            return this;
+        }
+
+        /// <summary>
+        /// Writes a <paramref name="message"/> and stores it in the question buffer in case the response is not valid
+        /// </summary>
+        /// <param name="message">text to be shown</param>
+        public IConsole Ask(string message) {
+            questionBuffer.Clear();
+            questionBuffer.Add(new ColorTokenItem(new ColorToken(message)));
+            Write(message);
+            addToBuffer = false;
+            return this;
+        }
+
+        /// <summary>
+        /// Writes a <paramref name="message"/> and stores it in the question buffer in case the response is not valid
+        /// </summary>
+        /// <param name="message">text to be shown</param>
+        /// <param name="color">color of the text</param>
+        public IConsole Ask(string message, Color color) {
+            questionBuffer.Clear();
+            questionBuffer.Add(new ColorTokenItem(new ColorToken(message, color)));
+            Write(message, color);
+            addToBuffer = false;
+            return this;
+        }
+
         /// <summary>
         /// Other way to access the <see cref="PowerConsole"/> options
         /// </summary>

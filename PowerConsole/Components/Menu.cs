@@ -73,8 +73,8 @@ namespace PowerConsole.Components
                 }
                 i++;
             }
-            Console.Write(BuildMessage());
-            string value = Console.ReadLine<string>("", x => IsDefaultValue(x) || Keys.Contains(x));
+            Console.Ask(BuildMessage());
+            string value = Console.ReadLine<string>(x => IsDefaultValue(x) || Keys.Contains(x));
             return IsDefaultValue(value) ? Options.DefaultItem : value;
         }
 

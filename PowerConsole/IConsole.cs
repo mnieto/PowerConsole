@@ -20,6 +20,49 @@ namespace PowerConsole
         ConsoleOptions Options { get; set; }
 
         /// <summary>
+        /// Activates the "question buffer". If text entered in any Read method is not valid, the question is prompted again to the user
+        /// </summary>
+        /// <remarks>
+        /// <para>
+        /// The "question buffer acts in a way that any Write* method stores the written values. 
+        /// If text entered in any Read method is not valid, the question is prompted again to the user
+        /// until a valid input is entered. In that moment the buffer is cleared
+        /// </para>
+        /// <para>
+        /// Do not mix this overload with any other Ask overloads, as the rest of overloads have the same behavior than the Write* methods,
+        /// but the Ask version save the message into the buffer
+        /// </para>
+        /// </remarks>
+        /// <example>
+        /// <code>
+        ///     string phone = console
+        ///         .Ask()
+        ///         .Write("Type your phone ")
+        ///         .ReadLine&lt;string&gt;("It's not a valid phone number", x =&gt; x.Length == 9);
+        /// </code>
+        /// </example>
+        IConsole Ask();
+
+        /// <summary>
+        /// Writes a <paramref name="message"/> and stores it in the question buffer in case the response is not valid
+        /// </summary>
+        /// <param name="message">text to be shown</param>
+        IConsole Ask(IEnumerable<ColorToken> message);
+
+        /// <summary>
+        /// Writes a <paramref name="message"/> and stores it in the question buffer in case the response is not valid
+        /// </summary>
+        /// <param name="message">text to be shown</param>
+        IConsole Ask(string message);
+
+        /// <summary>
+        /// Writes a <paramref name="message"/> and stores it in the question buffer in case the response is not valid
+        /// </summary>
+        /// <param name="message">text to be shown</param>
+        /// <param name="color">color of the text</param>
+        IConsole Ask(string message, Color color);
+
+        /// <summary>
         /// Set cursor position
         /// </summary>
         /// <param name="x">x coordinate</param>
