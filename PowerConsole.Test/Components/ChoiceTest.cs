@@ -49,6 +49,32 @@ namespace PowerConsole.Test.Components
                 x => Assert.Equal("n", x)
             );
         }
+
+        [Fact]
+        public void invalid_cast_exception_trying_to_show_other_than_int_or_bool() {
+            var sut = new Choice("question");
+            Assert.Throws<InvalidCastException>(() => sut.Show<string>());
+        }
+
+        [Fact]
+        public void cast_to_true_when_default_choice_is_selected() {
+            var sut = new Choice("question");
+            var redirect = new ConsoleRedirect();
+            string typedText = "y";
+            bool response = false;
+            var output = redirect.Redirect(typedText, () => response = sut.Show<bool>());
+            Assert.True(response);
+        }
+
+        [Fact]
+        public void cast_to_1_when_default_choice_is_selected() {
+            var sut = new Choice("question");
+            var redirect = new ConsoleRedirect();
+            string typedText = "y";
+            int response = 0;
+            var output = redirect.Redirect(typedText, () => response = sut.Show<int>());
+            Assert.Equal(1, response);
+        }
     }
 }
 

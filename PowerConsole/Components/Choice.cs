@@ -83,6 +83,34 @@ namespace PowerConsole.Components
             return value == string.Empty ? Options.Choices[Options.DefaultChoiceIndex] : value;
         }
 
+        /// <summary>
+        /// Prompts the question to the user and returns the user's choice
+        /// </summary>
+        /// <typeparamref name="T">
+        /// Data type to be returned. Only bool or int are allowed. Choice selected is casted to bool or int. 
+        /// If converted to int returned values are 0 or 1
+        /// </typeparamref>
+        /// <exception cref="InvalidCastException">When trying to cast other than bool or int</exception>
+        /// <remarks>
+        /// If the user press ENTER the default choice value is returned
+        /// </remarks>
+        /// <returns>User's selected option converted to the selected data type</returns>
+        public T Show<T>() {
+            if (typeof(T) != typeof(Boolean) && typeof(T).Name.Substring(0, 3).ToLower() != "int") {
+                throw new InvalidCastException("Can only cast to boolean or integer");
+            }
+            string response = Show();
+            char defaultChar = char.ToLower(Options.Choices[Options.DefaultChoiceIndex][0]);
+            try {
+                if (char.ToLower(response[0]) == defaultChar)
+                    return (T)Convert.ChangeType(1, typeof(T));
+                else
+                    return default(T);
+            } catch (Exception ex) {
+                throw new InvalidCastException($"Cannot convert {response} to {typeof(T).Name}.", ex);
+            }
+        }
+
         private IEnumerable<ColorToken> FormatChoices() {
             var result = new List<ColorToken>();
             result.Add(new ColorToken(Options.Brackets.Open.ToString()));
