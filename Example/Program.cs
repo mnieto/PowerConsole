@@ -36,8 +36,9 @@ namespace PowerConsole
             var tokenizer = new RegexTokenizer(pattern, new Color(System.ConsoleColor.White));
             console.WriteLine(tokenizer.Parse($"We have updated your {phone} number"));
 
-            //Using custom validation without message
-            bool guessValidResponse = console.Write("Are you happy? ").ReadLine<bool>(x => x == true, Color.Yellow);
+            //Choices
+            var choiceSelection = new Choice("Are you happy?").Show();
+            console.WriteLine($"Your choice: {choiceSelection}");
 
             //Parse string
             var parser = new AcceleratorCharTokenizer(Color.Blue);
@@ -54,8 +55,8 @@ namespace PowerConsole
                 NumerationFormat = "  {0}.- ",
                 DefaultItem = "2"
             });
-            string choice = menu.Show();
-            console.WriteLine($"Thanks for your choice: {choice}");
+            string menuSelection = menu.Show();
+            console.WriteLine($"Thanks for your choice: {menuSelection}");
 
             //Password reading
             console.WriteLine("Enter your password");

@@ -42,7 +42,7 @@ namespace PowerConsole
         /// <param name="text">chunk of text</param>
         /// <param name="foreground">foreground color of the text</param>
         /// <param name="background">background color of the text</param>
-        public ColorToken(string text, ConsoleColor foreground, ConsoleColor background) : this (text, new Color(foreground, background)) { }
+        public ColorToken(string text, ConsoleColor foreground, ConsoleColor? background = null) : this (text, new Color(foreground, background)) { }
 
 
         /// <summary>
