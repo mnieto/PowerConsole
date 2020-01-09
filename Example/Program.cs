@@ -14,6 +14,11 @@ namespace PowerConsole
 
             console.WriteLine("Hello World!".White().OnRed());
 
+            bool clipboadDemo = new Choice("Show clipboard demo?").Show<bool>();
+            if (clipboadDemo) {
+                ShowClipboardDemo(console);
+            }
+
             //Simple read without validation
             string name = console.Write("What's your name? ".Blue()).ReadLine<string>(Color.Yellow);
 
@@ -66,6 +71,27 @@ namespace PowerConsole
 
             System.Console.Write("Press any key to continue");
             System.Console.ReadKey();
+        }
+
+        private static void ShowClipboardDemo(IConsole console) {
+            console.WriteLine("We'll replace line #2 and restore it after 2 seconds");
+            console.WriteLine("Then will copy line #2 and paste at last,");
+            console.WriteLine("but changing the foreground color of first letter");
+            console.WriteLine("Line #1");
+            console.WriteLine("Line #2");
+            console.WriteLine("Line #3");
+
+            var clip = new ConsoleClipboard();
+            string replace = "Replacement text";
+            clip.Copy(0, 6, (short)replace.Length, 1);  //y parameter: Take in account the 2 first lines from main and the 3 description lines
+                                                        //width param: replacement text is longer that the original text. 
+            console.At(0, 6).Write(replace);
+            console.At(0, 9);                           //Reposition the cursor for next normal write operation in main
+
+            System.Threading.Thread.Sleep(2000);
+            clip.Paste();
+            clip.ColorAttributes[0, 0] = 0b1110;        //see https://docs.microsoft.com/en-us/windows/console/char-info-str for available values
+            clip.Paste(0, 8);
         }
     }
 
