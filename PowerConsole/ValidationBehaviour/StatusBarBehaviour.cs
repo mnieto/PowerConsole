@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using SysConsole = System.Console;
 
 namespace PowerConsole.ValidationBehaviour {
@@ -7,6 +8,9 @@ namespace PowerConsole.ValidationBehaviour {
     /// Shows the messages in the status bar (bottom right line of the console)
     /// </summary>
     public class StatusBarBehaviour : BaseValidationBehavior, IValidationBehavior {
+
+        private ConsoleClipboard Clipboard { get; set; }
+
         /// <summary>
         /// Duration (in ms) the messages are shown in the bottom left corner of the console
         /// </summary>
@@ -29,6 +33,8 @@ namespace PowerConsole.ValidationBehaviour {
         /// <param name="duration">Duration (in ms) the messages are shown./></param>
         /// <seealso cref="Duration"/>
         public StatusBarBehaviour(int duration) : base() {
+            Clipboard = new ConsoleClipboard();
+            Duration = duration;
             NeedReposition = true;
         }
 
@@ -46,27 +52,26 @@ namespace PowerConsole.ValidationBehaviour {
             ConsoleColor foreColor = SysConsole.ForegroundColor;
             ConsoleColor backColor = SysConsole.BackgroundColor;
 
-            //Write phase
-            //This may overwrite existing text. It's possible to read previously existing text from console to save it and restore after showing the message
-            //https://stackoverflow.com/questions/12355378/read-from-location-on-console-c-sharp
-            //https://docs.microsoft.com/en-us/windows/console/reading-and-writing-blocks-of-characters-and-attributes
-            SysConsole.SetCursorPosition(0, SysConsole.WindowTop + SysConsole.WindowHeight - 1);
+            short yPos = (short)(SysConsole.WindowTop + SysConsole.WindowHeight - 1);
+            Clipboard.Copy(0, yPos, (short)message.Length, 1);
+            SysConsole.SetCursorPosition(0, yPos);
             SysConsole.ForegroundColor = Console.Instance.Colors.ErrorColor;
             SysConsole.Write(message);
+            SysConsole.SetCursorPosition(x, y);
 
             //Wait and restore phase
             SysConsole.ForegroundColor = foreColor;
             SysConsole.BackgroundColor = backColor;
             if (Duration == 0) {
                 SysConsole.ReadKey();
+                Clipboard.Paste();
             } else {
-                //It would be nice if we could wait in separate thread. In that case, be awere that the cursos position could be different from the stored in the save phase
-                //https://stackoverflow.com/questions/46862475/changing-thread-context-in-c-sharp-console-application
-                System.Threading.Thread.Sleep(Duration);
+                Task.Factory.StartNew(() => {
+                    System.Threading.Thread.Sleep(Duration);
+                }).ContinueWith(c => {
+                    Clipboard.Paste();
+                });
             }
-            SysConsole.Write("\r" + new string(' ', message.Length));
-            SysConsole.SetCursorPosition(x, y);
-
             return NeedReposition;
         }
     }
